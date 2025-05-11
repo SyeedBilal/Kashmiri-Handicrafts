@@ -26,9 +26,6 @@ app.use(cors({
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization','Cookie','withCredentials'],
 
-  headers:{
-    credentials:true,
-  }
 }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
