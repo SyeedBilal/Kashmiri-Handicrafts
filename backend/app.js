@@ -16,6 +16,8 @@ const port = 3000;
 
 
 
+app.set('trust proxy', 1); // trust first proxy (Render, etc.)
+
 app.use(cookieParser()); 
 
 app.use(sessionConfig);
