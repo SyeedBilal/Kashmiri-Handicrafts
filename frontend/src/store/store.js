@@ -1,7 +1,7 @@
 import { configureStore } from '@reduxjs/toolkit';
 import { combineReducers } from 'redux';
 import { persistReducer, persistStore } from 'redux-persist';
-import { persistConfig } from '../services/persistantConfig'
+import { persistConfig } from './persistantConfig'
 import itemsReducer from "./Slices/itemsSlice";
 import cartReducer from './Slices/cartSlice';
 import authReducer from './Slices/authSlice';

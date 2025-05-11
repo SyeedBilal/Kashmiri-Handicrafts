@@ -23,13 +23,12 @@ api.interceptors.response.use(
       if (path.startsWith('/admin')) {
         // Handle admin logout
         store.dispatch(logoutAdmin());
-        document.cookie = 'token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
-        localStorage.removeItem('admin');
+        persistor.purge();
         window.location.href = '/admin/login';
       } else {
         // Handle user logout
         store.dispatch(logout());
-        localStorage.removeItem('user');
+        persistor.purge();
         window.location.href = '/login';
       }
     }

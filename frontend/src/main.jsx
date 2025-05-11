@@ -9,7 +9,7 @@ import { store, persistor } from './store/store';
 import './index.css';
 
 createRoot(document.getElementById('root')).render(
-
+  <React.StrictMode>
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
         <BrowserRouter>
@@ -17,5 +17,5 @@ createRoot(document.getElementById('root')).render(
         </BrowserRouter>
       </PersistGate>
     </Provider>
-  
+  </React.StrictMode>
 );
