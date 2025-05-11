@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useMemo, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { removeFromCartAsync, fetchCart } from '../../store/Actions/cartAction';
-import { selectIsAuthenticated } from '../../store/slices/authSlice';
+import { selectIsAuthenticated } from '../../store/Slices/authSlice';
 import { createOrder, verifyPayment } from '../../store/Actions/orderActions';
 import { useNavigate } from 'react-router-dom';
 import AddressForm from '../payments/AddressForm';

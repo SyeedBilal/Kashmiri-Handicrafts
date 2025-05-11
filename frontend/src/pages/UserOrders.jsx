@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import {api} from "../services/axiosInstance"
 import { useDispatch, useSelector } from 'react-redux';
-import { selectCurrentUser } from '../store/slices/authSlice';
+import { selectCurrentUser } from '../store/Slices/authSlice';
 import {fetchUserOrders} from '../store/Actions/orderActions';
 
 

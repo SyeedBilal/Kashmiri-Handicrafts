@@ -4,7 +4,7 @@ import "../../index.css"; // Corrected path
 import { Link, useNavigate } from "react-router-dom";
 import { FaShoppingCart, FaBars, FaTimes, FaSearch } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
-import { logout, selectIsAuthenticated } from "../../store/slices/authSlice"; // Corrected path and combined import
+import { logout, selectIsAuthenticated } from "../../store/Slices/authSlice"; // Corrected path and combined import
 import { selectIsAdminAuthenticated } from "../../store/Slices/adminSlice"; // Corrected path
 import axios from "axios"; // Consider moving to a service
 

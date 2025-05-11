@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { api } from '../services/axiosInstance'
 import { useSelector } from 'react-redux';
 import { selectAdmin } from '../store/Slices/adminSlice';
-import { adminItemsActions } from '../store/slices/adminItemsSlice';
+import { adminItemsActions } from '../store/Slices/adminItemsSlice';
 import { useDispatch } from 'react-redux';
 const AdminProductList = () => {
   const [products, setProducts] = useState([]);

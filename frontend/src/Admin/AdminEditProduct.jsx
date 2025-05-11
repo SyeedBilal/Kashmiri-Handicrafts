@@ -4,7 +4,7 @@ import { api } from "../services/axiosInstance";
 import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-import { adminItemsActions } from '../store/slices/adminItemsSlice';
+import { adminItemsActions } from '../store/Slices/adminItemsSlice';
 import { useNavigate } from 'react-router-dom';
 
 

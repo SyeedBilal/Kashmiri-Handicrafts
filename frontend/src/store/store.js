@@ -4,9 +4,9 @@ import { persistReducer, persistStore } from 'redux-persist';
 import { persistConfig } from '../services/persistantConfig'
 import itemsReducer from "./Slices/itemsSlice";
 import cartReducer from './Slices/cartSlice';
-import authReducer from './slices/authSlice';
+import authReducer from './Slices/authSlice';
 import adminReducer from './Slices/adminSlice'; 
-import adminItemsReducer from './slices/adminItemsSlice'; 
+import adminItemsReducer from './Slices/adminItemsSlice';
 import orderReducer from './Slices/orderSlice'; 
 
 // Combine reducers
