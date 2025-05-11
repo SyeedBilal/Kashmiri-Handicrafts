@@ -12,7 +12,7 @@ import AdminLogin from './Admin/AdminLogin';
 import AdminEditProduct from './Admin/AdminEditProduct';
 import OrderSuccess from './components/payments/OrderSucess';
 import SearchedItems from './pages/searchedItems';
-import { CollectionItems } from './pages/collections';
+import { CollectionItems } from './pages/Collections';
 import Fetchdata from './components/common/fetchdata';
 import UserOrders from './pages/UserOrders';
 function App() {
