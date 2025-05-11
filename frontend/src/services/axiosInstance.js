@@ -2,7 +2,6 @@ import axios from 'axios';
 import { store } from '../store/store'; 
 import { logoutAdmin } from "../store/Slices/adminSlice"; 
 import { logout } from '../store/Slices/authSlice'; 
-import { persistor } from '../store/store'; 
 
 const api = axios.create({
   baseURL: `${import.meta.env.VITE_BACKEND_URL}/api` || 'http://localhost:3000/api',
@@ -24,12 +23,12 @@ api.interceptors.response.use(
       if (path.startsWith('/admin')) {
         // Handle admin logout
         store.dispatch(logoutAdmin());
-        // persistor.purge();
+        persistor.purge();
         window.location.href = '/admin/login';
       } else {
         // Handle user logout
-        store.dispatch(logout());
-        // persistor.purge();
+      //   store.dispatch(logout());
+      //  persistor.purge();
         window.location.href = '/login';
       }
     }

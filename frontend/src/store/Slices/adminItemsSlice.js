@@ -13,7 +13,7 @@ const adminItemsSlice = createSlice({
     },
     removeAdminItem: (state, action) => {
 
-      // localStorage.removeItem('adminItems');
+      localStorage.removeItem('adminItems');
       return state.filter(item => item._id !== action.payload);
     }
   }
