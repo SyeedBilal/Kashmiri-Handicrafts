@@ -11,36 +11,36 @@ const api = axios.create({
 // Interceptor
 api.interceptors.response.use(
   (response) => response,
-  // (error) => {
-  //   // Check for unauthorized status or session expired messages
-  //   if (
-  //     error.response?.status === 401 || 
-  //     error.response?.status === 403 ||
-  //     error.response?.data?.isSessionExpired
-  //   ) {
-  //     const path = window.location.pathname;
+  (error) => {
+    // Check for unauthorized status or session expired messages
+    if (
+      error.response?.status === 401 || 
+      error.response?.status === 403 ||
+      error.response?.data?.isSessionExpired
+    ) {
+      const path = window.location.pathname;
       
-  //     if (path.startsWith('/admin')) {
-  //       // Handle admin logout
-  //       store.dispatch(logoutAdmin());
-  //       // Only purge persisted state during explicit logout
-  //       if (error.response?.data?.isSessionExpired) {
-  //         persistor.purge();
-  //       }
-  //       window.location.href = '/admin/login';
-  //     } else {
-  //       // Handle user logout
-  //       store.dispatch(logout());
-  //       localStorage.removeItem('user');
-  //       // Only purge persisted state during explicit logout
-  //       if (error.response?.data?.isSessionExpired) {
-  //         persistor.purge();
-  //       }
-  //       window.location.href = '/login';
-  //     }
-  //   }
-  //   return Promise.reject(error);
-  // }
+      if (path.startsWith('/admin')) {
+        // Handle admin logout
+        store.dispatch(logoutAdmin());
+        // Only purge persisted state during explicit logout
+        if (error.response?.data?.isSessionExpired) {
+          persistor.purge();
+        }
+        window.location.href = '/admin/login';
+      } else {
+        // Handle user logout
+        store.dispatch(logout());
+        localStorage.removeItem('user');
+        // Only purge persisted state during explicit logout
+        if (error.response?.data?.isSessionExpired) {
+          persistor.purge();
+        }
+        window.location.href = '/login';
+      }
+    }
+    return Promise.reject(error);
+  }
 );
 
 export { api }; // used this api instance in your API calls

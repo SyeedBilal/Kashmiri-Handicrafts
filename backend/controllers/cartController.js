@@ -38,7 +38,7 @@ exports.getCartItems=async (req,res)=>{
 // fetch userId from session for secure authentication (already done in the route using sessionCheck middleware)
   const userId=req.session.user.id
 
-  // console.log("userId at getCartItems",userId);
+  console.log("userId at getCartItems",userId);
 
   if (!userId) {
     return res.status(401).json({
@@ -49,7 +49,7 @@ exports.getCartItems=async (req,res)=>{
 
   try{
     const cartItems=await CartItems.find({userId}).populate('productId');
-    // console.log("cartItems",cartItems);
+    console.log("cartItems",cartItems);
     res.status(200).json(cartItems);
   }
   catch(err){

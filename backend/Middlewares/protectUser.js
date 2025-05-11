@@ -2,8 +2,9 @@
 exports.protectUser = (req, res, next) => {
   try {
     const userSession = req.session.user;
-// console.log("User Session:", req.session);
-// console.log("User session at protectUser", userSession);
+    
+console.log("User Session:", req.session);
+console.log("User session at protectUser", userSession);
 
     
     if (!userSession) {
