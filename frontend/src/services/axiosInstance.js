@@ -24,12 +24,12 @@ api.interceptors.response.use(
       if (path.startsWith('/admin')) {
         // Handle admin logout
         store.dispatch(logoutAdmin());
-        persistor.purge();
+        // persistor.purge();
         window.location.href = '/admin/login';
       } else {
         // Handle user logout
         store.dispatch(logout());
-        persistor.purge();
+        // persistor.purge();
         window.location.href = '/login';
       }
     }
