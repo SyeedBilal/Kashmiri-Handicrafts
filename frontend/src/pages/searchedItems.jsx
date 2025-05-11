@@ -2,7 +2,7 @@ import React from 'react';
 import { useLocation, Link } from 'react-router-dom';
 
 
-// Rename to follow React component naming convention (capital first letter)
+
 const SearchedItems = () => {
 
   const location = useLocation();

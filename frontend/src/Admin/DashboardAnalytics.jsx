@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { selectAdmin } from '../store/Slices/adminSlice';
 import { DollarSign, ShoppingBag, Users, Package, Upload, Truck, CheckCircle } from 'lucide-react';
-import axios from 'axios';
+import { api } from '../services/axiosInstance';
 import { useNavigate } from 'react-router-dom';
 
 
@@ -23,9 +23,7 @@ const DashboardAnalytics = ({ setActiveTab }) => {
 
     const fetchDashboardData = async () => {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/admin/dashboard/${currentAdmin.id}`, {
-          withCredentials: true,
-        });
+        const response = await api.get(`/admin/dashboard/${currentAdmin.id}`);
 
         setProducts(response.data.stats || {});
 
@@ -45,10 +43,9 @@ const DashboardAnalytics = ({ setActiveTab }) => {
   // Mark order as delivered
   const handleMarkDelivered = async (orderId) => {
     try {
-      await axios.put(
-        `${import.meta.env.VITE_BACKEND_URL}/admin/orders/deliver/${orderId}`,
-        {},
-        { withCredentials: true }
+      await api.put(
+        `/admin/orders/deliver/${orderId}`,
+        {}
       );
 
       setOrders((prevOrders) =>

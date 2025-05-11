@@ -1,5 +1,5 @@
 // store/orderActions.js
-import axios from 'axios';
+import { api } from '../../services/axiosInstance';
 import {
   setLoading,
   setError,
@@ -9,16 +9,13 @@ import {
 } from '../Slices/orderSlice';
 import { cartSliceActions } from '../Slices/cartSlice'; // Assuming you have a clearCart action
 
-const API_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3000/api';
 
 // Create order and initialize payment
 export const createOrder = (orderData) => async (dispatch) => {
   try {
     dispatch(setLoading(true));
     
-    const response = await axios.post(`${API_URL}/orders/create`, orderData, {
-      withCredentials:true,
-    });
+    const response = await api.post('/orders/create', orderData);
     
     dispatch(setCurrentOrder(response.data));
     return response.data; // Return for the component to handle Razorpay
@@ -32,19 +29,15 @@ export const createOrder = (orderData) => async (dispatch) => {
 export const verifyPayment = (paymentData) => async (dispatch) => {
   try {
     dispatch(setLoading(true));
-    const response = await axios.post(`${API_URL}/orders/verify-payment`, paymentData, {
-      withCredentials:true,
-    });
+    const response = await api.post('/orders/verify-payment', paymentData);
 
     if(response.data.success){
       dispatch(cartSliceActions.clearCart());
       dispatch(clearCurrentOrder());
-
     }
     else{
       dispatch(setError('Payment verification failed'));
     }
-    // Clear cart after successful payment
     
     return response.data;
   } catch (error) {
@@ -58,9 +51,7 @@ export const fetchUserOrders = (userId) => async (dispatch) => {
   try {
     dispatch(setLoading(true));
     
-    const response = await axios.get(`${API_URL}/orders/user/${userId}`, {
-      withCredentials:true,
-    });
+    const response = await api.get(`/orders/user/${userId}`);
     
     dispatch(setOrders(response.data));
   } catch (error) {
@@ -76,7 +67,7 @@ export const fetchUserOrders = (userId) => async (dispatch) => {
 //     dispatch(setLoading(true));
     
 //     const token = localStorage.getItem('token');
-//     const response = await axios.get(`${API_URL}/orders/admin/${adminId}`, {
+//     const response = await api.get(`${API_URL}/orders/admin/${adminId}`, {
 //       headers: {
 //         Authorization: `Bearer ${token}`
 //       }
