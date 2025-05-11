@@ -27,8 +27,8 @@ api.interceptors.response.use(
         window.location.href = '/admin/login';
       } else {
         // Handle user logout
-      //   store.dispatch(logout());
-      //  persistor.purge();
+        store.dispatch(logout());
+        localStorage.removeItem('user');
         window.location.href = '/login';
       }
     }

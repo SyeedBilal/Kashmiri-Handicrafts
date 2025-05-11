@@ -37,3 +37,6 @@ const store = configureStore({
       return result;
     }),
 });
+
+
+export const persistor = persistStore(store);
