@@ -1,6 +1,6 @@
 import { useForm } from "react-hook-form";
 import { useNavigate } from 'react-router-dom';
-import { setUser } from "../store/slices/authSlice";
+import { setUser } from "../store/Slices/authSlice";
 
 function Signup() {
   const navigate = useNavigate();

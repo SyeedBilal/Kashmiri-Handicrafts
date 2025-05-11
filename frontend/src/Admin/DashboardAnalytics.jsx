@@ -4,7 +4,7 @@ import { selectAdmin } from '../store/Slices/adminSlice';
 import { DollarSign, ShoppingBag, Users, Package, Upload, Truck, CheckCircle } from 'lucide-react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { toast } from 'react-toastify';
+
 
 const DashboardAnalytics = ({ setActiveTab }) => {
   const navigate = useNavigate();
@@ -37,7 +37,7 @@ const DashboardAnalytics = ({ setActiveTab }) => {
         setLoading(false);
       } catch (error) {
         console.error('Error fetching dashboard data:', error);
-        toast.error('Failed to load dashboard data');
+        
       }
     };
 

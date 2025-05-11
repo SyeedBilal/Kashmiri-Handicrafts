@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { Plus, Upload,DollarSign } from 'lucide-react';
-import {api} from "../services/axiosInstance"
 import { useSelector } from 'react-redux';
 import { selectAdmin } from '../store/Slices/adminSlice'; 
 import axios from 'axios';

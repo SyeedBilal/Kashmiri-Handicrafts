@@ -2,8 +2,7 @@ import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams, useNavigate } from "react-router-dom";
 import { addToCartAsync } from "../store/Actions/cartAction"
-import "react-toastify/dist/ReactToastify.css";
-import {toast} from "react-toastify";
+
 
 
 const ProductsDetail = () => {
@@ -29,7 +28,7 @@ const ProductsDetail = () => {
     try {
       await dispatch(addToCartAsync(userId, Id));
      
-      toast(`Product added to cart successfully`);
+  
     } catch (error) {
       console.error('Add to cart error:', error);
       alert('Failed to add product to cart');
