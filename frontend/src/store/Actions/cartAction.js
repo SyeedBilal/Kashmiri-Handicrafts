@@ -1,9 +1,11 @@
 import { cartSliceActions } from '../Slices/cartSlice';
 
+const API_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3000';
+
 export const fetchCart = () => {
   return async (dispatch) => {
     try {
-      const response = await fetch('http://localhost:3000/api/cart-items', {
+      const response = await fetch(`${API_URL}/api/cart-items`, {
         method:"GET",
         credentials: 'include',
         headers: {
@@ -17,7 +19,6 @@ export const fetchCart = () => {
 
       const data = await response.json();
 
-
       // Update the cart in Redux store
       dispatch(cartSliceActions.setCart(data));
       return data;
@@ -29,7 +30,7 @@ export const fetchCart = () => {
 };
 
 export const addToCartAsync = (userId, productId, quantity = 1) => async (dispatch) => {
-  const res = await fetch(`http://localhost:3000/api/add-to-cart`, {
+  const res = await fetch(`${API_URL}/api/add-to-cart`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     credentials:'include',
@@ -41,7 +42,7 @@ export const addToCartAsync = (userId, productId, quantity = 1) => async (dispat
 };
 
 export const removeFromCartAsync = (userId, productId) => async (dispatch) => {
-  const res = await fetch(`http://localhost:3000/api/cart/remove`, {
+  const res = await fetch(`${API_URL}/api/cart/remove`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ userId, productId }),

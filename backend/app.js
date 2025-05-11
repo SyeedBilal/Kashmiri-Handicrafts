@@ -21,7 +21,7 @@ app.use(cookieParser());
 app.use(sessionConfig);
 
 app.use(cors({
-  origin: 'http://localhost:5173', // Your React app URL
+  origin: process.env.FRONTEND_URL || 'http://localhost:5173', // Use env variable with fallback
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization','Cookie','withCredentials'],
@@ -52,4 +52,4 @@ app.use((err, req, res, next) => {
 app.listen(port, () =>
   console.log(`Backend Server is running on port http://localhost:${port}`)
 );
- 
+

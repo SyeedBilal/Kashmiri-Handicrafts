@@ -23,11 +23,9 @@ const DashboardAnalytics = ({ setActiveTab }) => {
 
     const fetchDashboardData = async () => {
       try {
-        const response = await axios.get(`http://localhost:3000/api/admin/dashboard/${currentAdmin.id}`, {
+        const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/admin/dashboard/${currentAdmin.id}`, {
           withCredentials: true,
         });
-
-       
 
         setProducts(response.data.stats || {});
 
@@ -48,7 +46,7 @@ const DashboardAnalytics = ({ setActiveTab }) => {
   const handleMarkDelivered = async (orderId) => {
     try {
       await axios.put(
-        `http://localhost:3000/api/admin/orders/deliver/${orderId}`,
+        `${import.meta.env.VITE_BACKEND_URL}/admin/orders/deliver/${orderId}`,
         {},
         { withCredentials: true }
       );

@@ -2,7 +2,8 @@ import { useState, useEffect } from 'react';
 import { Plus, Upload,DollarSign } from 'lucide-react';
 import { useSelector } from 'react-redux';
 import { selectAdmin } from '../store/Slices/adminSlice'; 
-import axios from 'axios';
+import { api } from '../services/axiosInstance';
+
 
 const ProductManagement = ({ setActiveTab }) => {
 
@@ -61,7 +62,7 @@ const AdminId=currentAdmin.id;
 
      
       
-      const response = await axios.post(`http://localhost:3000/api/admin/addProduct/${AdminId}`, formData,{
+      const response = await api.post(`/admin/addProduct/${AdminId}`, formData,{
         withCredentials:true,
         headers:{
           'Content-Type': 'multipart/form-data',

@@ -12,7 +12,7 @@ const Login = () => {
 
   const onSubmit = async (data) => {
     try {
-      const response = await api.post('http://localhost:3000/api/login', data); // 👈 Axios instance handles baseURL and cookies
+      const response = await api.post('/login', data); // Using api instance instead of hardcoded URL
 
       if (response.data.success) {
         dispatch(setUser(response.data.userData));

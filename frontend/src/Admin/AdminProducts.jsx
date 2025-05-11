@@ -25,10 +25,10 @@ const AdminProductList = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await api.get(`http://localhost:3000/api/admin/getproducts/${adminId}`);
+        const response = await api.get(`/admin/getproducts/${adminId}`);
         setProducts(response.data.products);
 
-dispatch(adminItemsActions.addAdminItem(response.data.products));
+        dispatch(adminItemsActions.addAdminItem(response.data.products));
         
         setLoading(false);
       } catch (error) {
@@ -44,7 +44,7 @@ dispatch(adminItemsActions.addAdminItem(response.data.products));
   const handleDelete = async (productId) => {
     if (window.confirm('Are you sure you want to delete this product?')) {
       try {
-        await api.delete(`http://localhost:3000/api/admin/deleteproduct/${productId}`);
+        await api.delete(`/admin/deleteproduct/${productId}`);
         setProducts(products.filter(product => product._id !== productId));
         dispatch(adminItemsActions.deleteAdminItem(productId));
       } catch (error) {

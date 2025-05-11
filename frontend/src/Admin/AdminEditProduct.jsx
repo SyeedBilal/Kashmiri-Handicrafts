@@ -71,7 +71,7 @@ const AdminEditProduct = ({ setActiveTab }) => {
       }
 
       const response = await api.put(
-        `http://localhost:3000/api/admin/updateProduct/${productId}`,
+        `/admin/updateProduct/${productId}`,
         formData,
         {
           headers: {

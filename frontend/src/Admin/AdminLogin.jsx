@@ -24,7 +24,7 @@ const dispatch = useDispatch();
     
     try {
       if (isLogin) {
-        const response = await api.post('http://localhost:3000/api/admin/login', formData);
+        const response = await api.post('/admin/login', formData);
        
         if (response.data.success) {
           
@@ -38,7 +38,7 @@ const dispatch = useDispatch();
           setError('Passwords do not match');
           return;
         }
-        const response = await api.post('http://localhost:3000/api/admin/signup', formData);
+        const response = await api.post('/admin/signup', formData);
         if (response.data) {
           setIsLogin(true);
           setError('Signup successful! Please login.');

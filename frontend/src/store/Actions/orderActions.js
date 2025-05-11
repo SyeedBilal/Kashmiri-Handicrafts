@@ -9,17 +9,15 @@ import {
 } from '../Slices/orderSlice';
 import { cartSliceActions } from '../Slices/cartSlice'; // Assuming you have a clearCart action
 
-// const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:3000/api';
-const API_URL = 'http://localhost:3000/api';
+const API_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3000/api';
 
 // Create order and initialize payment
 export const createOrder = (orderData) => async (dispatch) => {
   try {
     dispatch(setLoading(true));
     
-   
     const response = await axios.post(`${API_URL}/orders/create`, orderData, {
-   withCredentials:true,
+      withCredentials:true,
     });
     
     dispatch(setCurrentOrder(response.data));

@@ -9,8 +9,9 @@ const Fetchdata = () => {
   useEffect(() => {
     const controller = new AbortController();
     const signal = controller.signal;
+    const apiUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3000';
 
-    fetch('http://localhost:3000/api/products', { signal })
+    fetch(`${apiUrl}/api/products`, { signal })
       .then(res => {
         if (!res.ok) {
           throw new Error(`HTTP error! Status: ${res.status}`);

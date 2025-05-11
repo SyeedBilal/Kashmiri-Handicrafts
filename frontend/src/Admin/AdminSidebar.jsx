@@ -9,7 +9,7 @@ const AdminSidebar = ({ activeTab, setActiveTab, isMobileMenuOpen, setIsMobileMe
   const dispatch = useDispatch();
 
   const handleLogout = () => {
-    api.post('http://localhost:3000/api/admin/logout')
+    api.post('/admin/logout')
       .then((response) => {
         if (response.data.success) {
           dispatch(logoutAdmin());

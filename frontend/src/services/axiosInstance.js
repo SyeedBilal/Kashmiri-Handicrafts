@@ -4,7 +4,7 @@ import { logoutAdmin } from "../store/Slices/adminSlice";
 import { logout } from '../store/Slices/authSlice'; 
 
 const api = axios.create({
-  baseURL: 'http://localhost:3000/api', // Base URL for your API
+  baseURL: import.meta.env.VITE_BACKEND_URL || 'http://localhost:3000/api', // Use env variable or fallback
   withCredentials: true, // Send cookies (session-based authentication)
 });
 

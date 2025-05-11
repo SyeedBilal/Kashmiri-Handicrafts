@@ -6,7 +6,7 @@ import { FaShoppingCart, FaBars, FaTimes, FaSearch } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import { logout, selectIsAuthenticated } from "../../store/Slices/authSlice"; // Corrected path and combined import
 import { selectIsAdminAuthenticated } from "../../store/Slices/adminSlice"; // Corrected path
-import axios from "axios"; // Consider moving to a service
+import { api } from "../../services/axiosInstance";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -26,11 +26,11 @@ const Header = () => {
     }
 
     try {
-      const response = await axios.get(
-        `http://localhost:3000/api/products/search?query=${searchQuery}`
+      const response = await api.get(
+        `/products/search?query=${searchQuery}`
       );
       const results = response.data;
-      navigate("/search-results", { // Ensure this route is absolute
+      navigate("/search-results", {
         state: { searchResults: results, query: searchQuery },
       });
       setSearchQuery(""); // Clear search query after navigation
@@ -41,21 +41,12 @@ const Header = () => {
   };
 
   const handleOnLogout = () => {
-    fetch(`http://localhost:3000/api/logout`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
+    api.post(`/logout`)
       .then((response) => {
         if (!response.ok) {
           throw new Error("Logout failed");
         }
-        return response.json();
-      })
-      .then((data) => {
         dispatch(logout());
-       
         navigate("/"); // Navigate to home or login page
       })
       .catch((error) => {
