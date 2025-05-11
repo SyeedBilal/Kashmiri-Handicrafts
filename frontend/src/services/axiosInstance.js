@@ -8,7 +8,22 @@ const api = axios.create({
   withCredentials: true, // Send cookies (session-based authentication)
 });
 
-// Interceptor
+// Update the axios instance to handle JWT for admins and session-based auth for users
+api.interceptors.request.use((config) => {
+  const path = window.location.pathname;
+
+  if (path.startsWith('/admin')) {
+    // Attach JWT token for admin requests
+    const adminToken = localStorage.getItem('adminToken');
+    if (adminToken) {
+      config.headers.Authorization = `Bearer ${adminToken}`;
+    }
+  }
+
+  // For user requests, cookies are automatically sent due to `withCredentials: true`
+  return config;
+});
+
 api.interceptors.response.use(
   (response) => response,
   (error) => {
@@ -23,12 +38,19 @@ api.interceptors.response.use(
       if (path.startsWith('/admin')) {
         // Handle admin logout
         store.dispatch(logoutAdmin());
-        persistor.purge();
+        // Only purge persisted state during explicit logout
+        if (error.response?.data?.isSessionExpired) {
+          persistor.purge();
+        }
         window.location.href = '/admin/login';
       } else {
         // Handle user logout
         store.dispatch(logout());
         localStorage.removeItem('user');
+        // Only purge persisted state during explicit logout
+        if (error.response?.data?.isSessionExpired) {
+          persistor.purge();
+        }
         window.location.href = '/login';
       }
     }
