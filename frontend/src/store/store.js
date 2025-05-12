@@ -23,20 +23,14 @@ const rootReducer = combineReducers({
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 
 // Configure store
-const store = configureStore({
+export const store = configureStore({
   reducer: persistedReducer,
-  middleware: (getDefaultMiddleware) =>
+  middleware: (getDefaultMiddleware) => 
     getDefaultMiddleware({
       serializableCheck: {
         ignoredActions: ['persist/PERSIST', 'persist/REHYDRATE'],
       },
-    }).concat((storeAPI) => (next) => (action) => {
-      console.log('%cAction Dispatched:', 'color: cyan', action);
-      const result = next(action);
-      console.log('%cNew State:', 'color: green', storeAPI.getState());
-      return result;
     }),
 });
-
 
 export const persistor = persistStore(store);
