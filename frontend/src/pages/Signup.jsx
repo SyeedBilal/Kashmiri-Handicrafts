@@ -78,26 +78,7 @@ function Signup() {
               )}
             </div>
 
-            <div className="mb-5">
-              <label className="block text-amber-900 mb-1 font-medium">User Type:</label>
-              <div className="flex gap-4">
-                <label className="flex items-center">
-                  <input
-                    type="radio"
-                    {...register('userType', {
-                      required: "Please select a user type"
-                    })}
-                    value="customer"
-                    className="w-4 h-4 text-amber-600 border-amber-300 focus:ring-amber-500"
-                  />
-                  <span className="ml-2 text-amber-900">Customer</span>
-                </label>
-                 
-              </div>
-              {errors.userType && (
-                <p className="text-red-600 text-sm mt-1">{errors.userType.message}</p>
-              )}
-            </div>
+     
 
             <div className="mb-6">
               <label className="block text-amber-900 mb-1 font-medium">Password:</label>
