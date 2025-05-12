@@ -1,6 +1,7 @@
 // src/features/admin/adminSlice.js
 
 import { createSlice } from '@reduxjs/toolkit';
+import { persistor } from '../store';
 
 // Initial state for admin
 const initialState = {
@@ -20,6 +21,7 @@ const adminSlice = createSlice({
     
       state.admin = null;
       state.isAuthenticated = false;
+      persistor.purge();
     },
   },
 });

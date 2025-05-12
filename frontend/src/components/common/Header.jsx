@@ -46,6 +46,7 @@ const Header = () => {
         if (response.success) {
           
           dispatch(logout());
+          alert(response.message || "Logout successful");
           navigate("/"); 
         }
       })

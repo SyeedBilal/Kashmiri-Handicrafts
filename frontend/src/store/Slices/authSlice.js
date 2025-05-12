@@ -1,4 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
+import { persistConfig } from '../../services/persistantConfig';
 
 // Initial state with potential persisted data
 const initialState = {
@@ -17,7 +18,7 @@ const authSlice = createSlice({
     logout: (state) => {
       state.user = null;
       state.isAuthenticated = false;
-      localStorage.removeItem('auth');
+      persistConfig.purge(); 
     },
   },
 });
