@@ -22,13 +22,15 @@ app.use(cookieParser());
 
 app.use(sessionConfig);
 
-app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:5173', // Use env variable with fallback
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  allowedHeaders: ['Content-Type', 'Authorization','Cookie','withCredentials'],
+app.use(
+  cors({
+    origin: process.env.FRONTEND_URL || "http://localhost:5173",
+    credentials: true, // must be true to allow cookies
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+  })
+);
 
-}));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(limiter); // Apply rate limiting middleware
