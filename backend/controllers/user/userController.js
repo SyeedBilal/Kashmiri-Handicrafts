@@ -98,6 +98,8 @@ exports.loginUser=async (req,res)=>{
 }
 
 exports.logoutUser = (req, res) => {
+
+  console.log("At logout User ",req.session);
   try {
     req.session.destroy((err) => {
       if (err) {
@@ -115,6 +117,8 @@ exports.logoutUser = (req, res) => {
         secure: true,
         sameSite: 'none'
       });
+
+      console.log("Session destroyed successfully");
 
       return res.status(200).json({
         success: true,
