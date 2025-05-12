@@ -56,13 +56,13 @@ try{
 
 const token=generateToken({id:admin._id,email:admin.email,role:'admin'});
 
-// save token in httpOnly cookie
-res.cookie("token",token,{
-  httpOnly:true,
-  secure:process.env.NODE_ENV === 'production', // Set to be true in deployment , true works only in https 
-  samesite:'strict',   // set strict to prevent CSRF attacks
-  maxAge:3*60*60*1000 // 3 hours
+res.cookie("token", token, {
+  httpOnly: true,
+  secure: true,          
+  sameSite: 'none',       
+  maxAge: 3 * 60 * 60 * 1000
 });
+
 
 res.status(200).json({
   success:true,

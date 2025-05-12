@@ -6,7 +6,7 @@ exports.protectAdmin=async (req,res,next)=>{
 
 const token=req.cookies.token;
 
-// console.log("token in proctectAdmin",token);
+console.log("token in proctectAdmin",token);
 if(!token){
   return res.status(401).json({error:"Unauthorized",success:false});
 }

@@ -112,8 +112,8 @@ exports.logoutUser = (req, res) => {
       res.clearCookie("connect.sid", {
         path: '/',
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'strict'
+        secure: true,
+        sameSite: 'none'
       });
 
       return res.status(200).json({
