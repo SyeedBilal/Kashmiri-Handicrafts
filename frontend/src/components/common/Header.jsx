@@ -5,8 +5,10 @@ import { Link, useNavigate } from "react-router-dom";
 import { FaShoppingCart, FaBars, FaTimes, FaSearch } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import { logout, selectIsAuthenticated } from "../../store/Slices/authSlice"; // Corrected path and combined import
-import { selectIsAdminAuthenticated } from "../../store/Slices/adminSlice"; // Corrected path
+import { selectIsAdminAuthenticated } from "../../store/Slices/adminSlice"; 
 import { api } from "../../services/axiosInstance";
+
+import {persistor} from '../../store/store'
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -43,13 +45,13 @@ const Header = () => {
   const handleOnLogout = async () => {
     try {
       const response = await api.post('/logout');
+      alert(response.message || "Logout successful");
       // First purge
       await persistor.purge();
       // Then dispatch
       dispatch(logout());
       // Then navigate
       navigate('/');
-      alert(response.message || "Logout successful");
     } catch (error) {
       console.error("Error during logout:", error);
     }
