@@ -12,6 +12,7 @@ const adminRouter=require("./routes/adminRouter");
 const orderRouter = require("./routes/orderRouter");
 const app = express();
 const port = 3000;
+const path = require('path');
 
 
 
@@ -48,6 +49,16 @@ app.get("/", (req, res) => res.send("Connected to the backend server"));
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(err.status || 500).json({ success: false, error: err.message || "Internal Server Error" });
+});
+
+
+// Serve static files from the React app
+app.use(express.static(path.join(__dirname, '../frontend/dist')));
+
+// The "catch-all" handler: for any request that doesn't
+// match one of the routes above, send back React's index.html file
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '../frontend/dist', 'index.html'));
 });
 
 app.listen(port, () =>
