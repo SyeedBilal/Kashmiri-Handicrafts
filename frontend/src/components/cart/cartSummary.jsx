@@ -8,7 +8,7 @@ import AddressForm from '../payments/AddressForm';
 import CartItemsList from './cartItemsList';
 import OrderSummary from '../payments/OrderSummary';
 import PaymentSummary from '../payments/PaymentSummary';
-import LoadingSpinner from '../common/LoadingSpinner'; // Assume you have this component
+
 
 const CartSummary = () => {
   const dispatch = useDispatch();
