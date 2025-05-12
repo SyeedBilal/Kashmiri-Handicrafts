@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { store } from '../store/store'; 
+import { persistor, store } from '../store/store'; 
 import { logoutAdmin } from "../store/Slices/adminSlice"; 
 import { logout } from '../store/Slices/authSlice'; 
 
@@ -31,8 +31,8 @@ api.interceptors.response.use(
       } else {
         // Handle user logout
         store.dispatch(logout());
-        localStorage.removeItem('user');
-        // Only purge persisted state during explicit logout
+      persistor.purge();
+        
         if (error.response?.data?.isSessionExpired) {
           persistor.purge();
         }

@@ -45,6 +45,9 @@ const Header = () => {
   const handleOnLogout = async () => {
     try {
       const response = await api.post('/logout');
+
+ console.log("Logout response:", response.data);
+
       alert(response.message || "Logout successful");
       // First purge
       await persistor.purge();
