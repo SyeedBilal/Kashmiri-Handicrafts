@@ -9,6 +9,9 @@ import { selectIsAdminAuthenticated } from "../../store/Slices/adminSlice";
 import { api } from "../../services/axiosInstance";
 
 import {persistor} from '../../store/store'
+import { cartSliceActions } from "../../store/Slices/cartSlice";
+
+import {  clearCurrentOrder } from "../../store/Slices/orderSlice"; 
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -49,11 +52,15 @@ const Header = () => {
  console.log("Logout response:", response.data);
 
       alert(response.message || "Logout successful");
-      // First purge
+      
+      dispatch(cartSliceActions.clearCart());
+
+      dispatch( clearCurrentOrder());
+
       await persistor.purge();
-      // Then dispatch
+ 
       dispatch(logout());
-      // Then navigate
+    
       navigate('/');
     } catch (error) {
       console.error("Error during logout:", error);
