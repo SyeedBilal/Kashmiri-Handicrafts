@@ -6,7 +6,7 @@ const bcrypt=require('bcrypt');
 
 exports.registerUser=async(req,res)=>{
 console.log("Registed User",req.body);
-const {username,email,password}=req.body;
+const {name,email,password}=req.body;
 
 const hashPassword=await bcrypt.hash(password,12);
 try{
@@ -14,7 +14,7 @@ try{
 
 
 const user=new User({
-  username,
+  name,
   email,
   password:hashPassword
 })
