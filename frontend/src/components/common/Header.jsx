@@ -43,12 +43,11 @@ const Header = () => {
   const handleOnLogout = () => {
     api.post(`/logout`)
       .then((response) => {
-        if (response.success) {
-          
+        
+        alert(response.message || "Logout successful");
           dispatch(logout());
-          alert(response.message || "Logout successful");
           navigate("/"); 
-        }
+        
       })
       .catch((error) => {
         console.error("Error during logout:", error);
