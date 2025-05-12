@@ -32,11 +32,14 @@ export const addToCartAsync = (userId, productId, quantity = 1) => async (dispat
 
 export const removeFromCartAsync = (userId, productId) => async (dispatch) => {
   try {
-    const response = await api.post('/cart/remove', {
+    // First remove the item
+    await api.post('/cart/remove', {
       userId,
       productId
     });
     
+    // Then fetch the updated cart to ensure we have the correct array
+    const response = await api.get('/cart-items');
     dispatch(cartSliceActions.setCart(response.data));
   } catch (error) {
     console.error('Remove from cart error:', error);

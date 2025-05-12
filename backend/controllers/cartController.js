@@ -85,16 +85,3 @@ console.log("userId:", userId, typeof userId);
 }
 
 
-//   yet to implement
-// exports.updateCart=async (req,res)=>{
-//   const {userId,productId,quantity}=req.body;
-//   try{
-//     const cartItem=await CartItems.findOneAndUpdate({userId,productId},{quantity});
-//     console.log("cartItem",cartItem);
-//     res.status(200).json(cartItem);
-//   }
-//   catch(err){
-//     console.log("error in updateCart",err);
-//     res.status(500).json({error:"Internal Server Error"});
-//   }
-// }

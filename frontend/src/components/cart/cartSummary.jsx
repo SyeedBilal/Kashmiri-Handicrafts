@@ -28,26 +28,27 @@ const CartSummary = () => {
   const isAuthenticated = useSelector(selectIsAuthenticated);
   const cartItems = useSelector((state) => state.cart);
   const totalItem = cartItems?.length || 0;
-  const CONVENIENCE_FEE = 99;
+  const CONVENIENCE_FEE = 50; // Example value
 
   // Memoized cart totals calculation
   const cartTotals = useMemo(() => {
     let totalMRP = 0;
     let totalDiscount = 0;
 
-    cartItems?.forEach((cartItem) => {
+    // Ensure cartItems is an array before using forEach
+    const items = Array.isArray(cartItems) ? cartItems : [];
+    
+    items.forEach((cartItem) => {
       const product = cartItem.productId;
-      totalMRP += product.originalPrice * cartItem.quantity;
-      totalDiscount += (product.originalPrice - product.price) * cartItem.quantity;
+      if (product) { // Add safety check for product
+        totalMRP += product.originalPrice * cartItem.quantity;
+        totalDiscount += (product.originalPrice - product.price) * cartItem.quantity;
+      }
     });
 
     const finalPayment = totalMRP - totalDiscount + (totalItem > 0 ? CONVENIENCE_FEE : 0);
-
-    return {
-      totalMRP,
-      totalDiscount,
-      finalPayment,
-    };
+    
+    return { totalMRP, totalDiscount, finalPayment };
   }, [cartItems, totalItem]);
 
   // Load cart data
