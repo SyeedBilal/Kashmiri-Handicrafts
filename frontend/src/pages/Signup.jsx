@@ -17,11 +17,10 @@ function Signup() {
   try {
     const response = await api.post('/signup', data); 
 
-    const result = await response.json();
 
-    if (result.success) {
+    if (response.data.success) {
       setUser(true);
-      alert("Signup Successful");
+      alert("Signup Successful please login");
       navigate('/');
     } else {
       const errorMsg = result.errors?.map(err => err.msg).join('\n') || result.error;
