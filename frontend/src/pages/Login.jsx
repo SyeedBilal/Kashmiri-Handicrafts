@@ -72,8 +72,8 @@ const Login = () => {
                 {...register('password', {
                   required: 'Password is required',
                   minLength: {
-                    value: 8,
-                    message: 'Password must be at least 8 characters',
+                    value: 6,
+                    message: 'Password must be at least 6 characters',
                   },
                 })}
                 className="appearance-none rounded-md relative block w-full px-3 py-2 border border-amber-300 placeholder-amber-500 text-amber-900 focus:outline-none focus:ring-amber-500 focus:border-amber-500 focus:z-10 sm:text-sm"
