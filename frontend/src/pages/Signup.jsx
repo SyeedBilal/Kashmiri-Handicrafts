@@ -1,6 +1,7 @@
 import { useForm } from "react-hook-form";
 import { useNavigate } from 'react-router-dom';
 import { setUser } from "../store/Slices/authSlice";
+import {api} from '../services/axiosInstance'; 
 
 function Signup() {
   const navigate = useNavigate();
@@ -14,11 +15,7 @@ function Signup() {
  const onSubmit = async (data) => {
  
   try {
-    const response = await fetch('http://localhost:3000/api/signup', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data),
-    });
+    const response = await api.post('/signup', data); 
 
     const result = await response.json();
 
