@@ -8,6 +8,7 @@ function Signup() {
   const {
     register,
     handleSubmit,
+    getValues, 
     formState: { errors, isSubmitting },
   } = useForm();
 
@@ -23,7 +24,7 @@ function Signup() {
       alert("Signup Successful please login");
       navigate('/');
     } else {
-      const errorMsg = result.errors?.map(err => err.msg).join('\n') || result.error;
+      const errorMsg = response.data.errors?.map(err => err.msg).join('\n') || response.data.error;
       alert(errorMsg);
     }
   } catch (error) {
