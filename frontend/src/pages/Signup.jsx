@@ -19,7 +19,7 @@ function Signup() {
 
 
     if (response.data.success) {
-      setUser(true);
+
       alert("Signup Successful please login");
       navigate('/');
     } else {

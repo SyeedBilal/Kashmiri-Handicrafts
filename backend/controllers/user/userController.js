@@ -30,7 +30,7 @@ req.session.isAuth=true;
 req.session.user=user;
 
 
-res.status(200).json({message:"User Registered Successfully",sucess:true});
+res.status(200).json({message:"User Registered Successfully",success:true});
 }
 catch(err){
   console.log("error in registerUser",err);
