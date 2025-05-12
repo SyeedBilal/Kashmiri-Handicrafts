@@ -21,7 +21,7 @@ const adminSlice = createSlice({
     
       state.admin = null;
       state.isAuthenticated = false;
-      persistor.purge();
+    
     },
   },
 });

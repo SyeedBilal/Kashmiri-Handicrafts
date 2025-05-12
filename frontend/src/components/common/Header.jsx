@@ -40,19 +40,20 @@ const Header = () => {
     }
   };
 
-  const handleOnLogout = () => {
-    api.post(`/logout`)
-      .then((response) => {
-        
-        alert(response.message || "Logout successful");
-          dispatch(logout());
-          navigate("/"); 
-        
-      })
-      .catch((error) => {
-        console.error("Error during logout:", error);
-      });
-    setIsMenuOpen(false); 
+  const handleOnLogout = async () => {
+    try {
+      const response = await api.post('/logout');
+      // First purge
+      await persistor.purge();
+      // Then dispatch
+      dispatch(logout());
+      // Then navigate
+      navigate('/');
+      alert(response.message || "Logout successful");
+    } catch (error) {
+      console.error("Error during logout:", error);
+    }
+    setIsMenuOpen(false);
   };
   
   // Close mobile menu on route change

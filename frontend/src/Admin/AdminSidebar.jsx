@@ -3,22 +3,26 @@ import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { logoutAdmin } from '../store/Slices/adminSlice';
 import { api } from '../services/axiosInstance';
+import {persistor} from '../store/store'
 
 const AdminSidebar = ({ activeTab, setActiveTab, isMobileMenuOpen, setIsMobileMenuOpen }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const handleLogout = () => {
-    api.post('/admin/logout')
-      .then((response) => {
-        if (response.data.success) {
-          dispatch(logoutAdmin());
-          navigate('/admin/login');
-        }
-      })
-      .catch((error) => {
-        console.error("Error during logout:", error);
-      });
+  const handleLogout = async () => {
+    try {
+      const response = await api.post('/admin/logout');
+      if (response.data.success) {
+       
+        await persistor.purge();
+    
+        dispatch(logoutAdmin());
+       
+        navigate('/admin/login');
+      }
+    } catch (error) {
+      console.error("Error during logout:", error);
+    }
   };
 
   return (
