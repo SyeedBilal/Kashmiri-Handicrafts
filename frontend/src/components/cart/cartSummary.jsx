@@ -1,13 +1,14 @@
 import React, { useEffect, useState, useMemo, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import { removeFromCartAsync, fetchCart } from '../../store/Actions/cartAction';
 import { selectIsAuthenticated } from '../../store/Slices/authSlice';
 import { createOrder, verifyPayment } from '../../store/Actions/orderActions';
-import { useNavigate } from 'react-router-dom';
 import AddressForm from '../payments/AddressForm';
 import CartItemsList from './cartItemsList';
 import OrderSummary from '../payments/OrderSummary';
 import PaymentSummary from '../payments/PaymentSummary';
+import LoadingSpinner from '../common/LoadingSpinner'; // Assume you have this component
 
 const CartSummary = () => {
   const dispatch = useDispatch();
@@ -20,19 +21,21 @@ const CartSummary = () => {
     state: '',
     pincode: '',
   });
+  const [error, setError] = useState(null);
 
   const user = useSelector((state) => state.auth.user);
   const userId = user?.userId;
   const isAuthenticated = useSelector(selectIsAuthenticated);
   const cartItems = useSelector((state) => state.cart);
-  const totalItem = cartItems.length;
+  const totalItem = cartItems?.length || 0;
   const CONVENIENCE_FEE = 99;
 
+  // Memoized cart totals calculation
   const cartTotals = useMemo(() => {
     let totalMRP = 0;
     let totalDiscount = 0;
 
-    cartItems.forEach((cartItem) => {
+    cartItems?.forEach((cartItem) => {
       const product = cartItem.productId;
       totalMRP += product.originalPrice * cartItem.quantity;
       totalDiscount += (product.originalPrice - product.price) * cartItem.quantity;
@@ -47,25 +50,30 @@ const CartSummary = () => {
     };
   }, [cartItems, totalItem]);
 
-  const handleRemoveFromCart = useCallback((itemId) => {
-    dispatch(removeFromCartAsync(userId, itemId));
-  }, [dispatch, userId]);
-
+  // Load cart data
   useEffect(() => {
     const loadCart = async () => {
       try {
         setIsLoading(true);
-        dispatch(fetchCart());
-      } catch (error) {
-        console.error('Failed to fetch cart:', error);
+        setError(null);
+        await dispatch(fetchCart());
+      } catch (err) {
+        console.error('Failed to fetch cart:', err);
+        setError('Failed to load cart. Please try again.');
       } finally {
         setIsLoading(false);
       }
     };
 
-    if (userId) {
+    if (isAuthenticated && userId) {
       loadCart();
+    } else if (!isAuthenticated) {
+      navigate('/login', { state: { from: '/cart' } });
     }
+  }, [dispatch, userId, isAuthenticated, navigate]);
+
+  const handleRemoveFromCart = useCallback((itemId) => {
+    dispatch(removeFromCartAsync(userId, itemId));
   }, [dispatch, userId]);
 
   const handleAddressChange = (e) => {
@@ -76,32 +84,32 @@ const CartSummary = () => {
   };
 
   const handleProceedToAddress = () => {
-    if (totalItem === 0) return;
+    if (totalItem === 0) {
+      setError('Your cart is empty');
+      return;
+    }
     setCheckoutStep('address');
+    setError(null);
   };
 
   const handleProceedToPayment = () => {
-    // Basic validation
     if (!addressData.address || !addressData.city || !addressData.state || !addressData.pincode) {
-      alert('Please fill all address fields');
+      setError('Please fill all address fields');
       return;
     }
     setCheckoutStep('payment');
+    setError(null);
   };
 
   const handlePayment = async () => {
     try {
-      // Create order and get Razorpay details
       const orderData = {
         userId,
         shippingAddress: addressData,
       };
       
       const response = await dispatch(createOrder(orderData));
-
-   
       
-      // Initialize Razorpay
       const options = {
         key: response.key,
         amount: response.razorpayOrder.amount,
@@ -109,23 +117,21 @@ const CartSummary = () => {
         name: 'Kashmiri Handicrafts',
         description: 'Purchase',
         order_id: response.razorpayOrder.id,
-        handler: async (response) => {
-          // Handle success payment
-          const paymentData = {
-            razorpayOrderId: response.razorpay_order_id,
-            razorpayPaymentId: response.razorpay_payment_id,
-            razorpaySignature: response.razorpay_signature,
-          };
-          
+        handler: async (paymentResponse) => {
           try {
+            const paymentData = {
+              razorpayOrderId: paymentResponse.razorpay_order_id,
+              razorpayPaymentId: paymentResponse.razorpay_payment_id,
+              razorpaySignature: paymentResponse.razorpay_signature,
+            };
+            
             await dispatch(verifyPayment(paymentData));
-            // Navigate to success page
             navigate('/order-success', { 
-              state: { orderId: response.razorpay_order_id } 
+              state: { orderId: paymentResponse.razorpay_order_id } 
             });
-          } catch (error) {
-            console.error('Payment verification failed:', error);
-            alert('Payment verification failed');
+          } catch (err) {
+            console.error('Payment verification failed:', err);
+            setError('Payment verification failed');
           }
         },
         prefill: {
@@ -134,16 +140,16 @@ const CartSummary = () => {
           contact: user.phone || '',
         },
         theme: {
-          color: '#B45309', // Amber 700
+          color: '#B45309',
         },
       };
       
       const razorpayInstance = new window.Razorpay(options);
       razorpayInstance.open();
       
-    } catch (error) {
-      console.error('Payment initialization failed:', error);
-      alert('Unable to process payment. Please try again later.');
+    } catch (err) {
+      console.error('Payment initialization failed:', err);
+      setError('Unable to process payment. Please try again later.');
     }
   };
 
@@ -157,62 +163,79 @@ const CartSummary = () => {
     );
   }
 
+  // Show loading state
   if (isLoading) {
-    return <div className="text-center py-8">Loading cart items...</div>;
+    return <p> Loading ...</p>
   }
 
-  // Render address form
-  if (checkoutStep === 'address') {
+  // Show error state
+  if (error) {
     return (
-      <AddressForm
-        addressData={addressData}
-        handleAddressChange={handleAddressChange}
-        onBack={() => setCheckoutStep('cart')}
-        onContinue={handleProceedToPayment}
-      />
-    );
-  }
-
-  // Render payment summary
-  if (checkoutStep === 'payment') {
-    return (
-      <PaymentSummary
-        addressData={addressData}
-        cartTotals={cartTotals}
-        totalItem={totalItem}
-        CONVENIENCE_FEE={CONVENIENCE_FEE}
-        onBack={() => setCheckoutStep('address')}
-        onPay={handlePayment}
-      />
-    );
-  }
-
-  // Default cart view
-  return (
-    <div className="container mx-auto py-8 px-4">
-    <main className="flex flex-col md:flex-row gap-6">
-      {/* Cart Items Section */}
-      <div className="flex-grow md:w-2/3">
-        <h2 className="text-2xl font-bold text-amber-800 mb-6">
-          My Bag ({totalItem} Items)
-        </h2>
-        <CartItemsList
-          cartItems={cartItems}
-          handleRemoveFromCart={handleRemoveFromCart}
-        />
+      <div className="text-center py-8">
+        <h2 className="text-2xl font-bold text-red-600 mb-4">Error</h2>
+        <p className="text-gray-600">{error}</p>
+        <button 
+          onClick={() => window.location.reload()}
+          className="mt-4 px-4 py-2 bg-amber-700 text-white rounded hover:bg-amber-800"
+        >
+          Try Again
+        </button>
       </div>
-      {/* Order Summary Section */}
-      <div className="md:w-1/3">
-        <OrderSummary
+    );
+  }
+
+  // Render checkout steps
+  switch (checkoutStep) {
+    case 'address':
+      return (
+        <AddressForm
+          addressData={addressData}
+          handleAddressChange={handleAddressChange}
+          onBack={() => setCheckoutStep('cart')}
+          onContinue={handleProceedToPayment}
+        />
+      );
+    case 'payment':
+      return (
+        <PaymentSummary
+          addressData={addressData}
           cartTotals={cartTotals}
           totalItem={totalItem}
           CONVENIENCE_FEE={CONVENIENCE_FEE}
-          handleProceedToAddress={handleProceedToAddress}
+          onBack={() => setCheckoutStep('address')}
+          onPay={handlePayment}
         />
-      </div>
-    </main>
-  </div>
-  );
+      );
+    default:
+      return (
+        <div className="container mx-auto py-8 px-4">
+          {error && (
+            <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-6">
+              <p>{error}</p>
+            </div>
+          )}
+          <main className="flex flex-col md:flex-row gap-6">
+            <div className="flex-grow md:w-2/3">
+              <h2 className="text-2xl font-bold text-amber-800 mb-6">
+                My Bag ({totalItem} Items)
+              </h2>
+              <CartItemsList
+                cartItems={cartItems}
+                handleRemoveFromCart={handleRemoveFromCart}
+              />
+            </div>
+            <div className="md:w-1/3">
+              <OrderSummary
+                cartTotals={cartTotals}
+                totalItem={totalItem}
+                CONVENIENCE_FEE={CONVENIENCE_FEE}
+                handleProceedToAddress={handleProceedToAddress}
+              />
+            </div>
+          </main>
+        </div>
+      );
+  }
 };
 
 export default CartSummary;
