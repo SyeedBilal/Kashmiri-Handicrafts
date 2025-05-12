@@ -17,7 +17,7 @@ const Header = () => {
 
   const isLoggedIn = useSelector(selectIsAuthenticated);
   const isAdmin = useSelector(selectIsAdminAuthenticated);
-  const cartItems = useSelector((state) => state.cart); // Assuming state.cart is an array of items
+  const cartItems = useSelector((state) => state.cart); 
   const cartItemCount = cartItems.length;
 
   const handleSearchQuery = async () => {
@@ -33,8 +33,8 @@ const Header = () => {
       navigate("/search-results", {
         state: { searchResults: results, query: searchQuery },
       });
-      setSearchQuery(""); // Clear search query after navigation
-      setIsMenuOpen(false); // Close mobile menu if open
+      setSearchQuery(""); 
+      setIsMenuOpen(false); 
     } catch (error) {
       console.error("Error searching products:", error);
     }
@@ -43,11 +43,11 @@ const Header = () => {
   const handleOnLogout = () => {
     api.post(`/logout`)
       .then((response) => {
-        if (!response.ok) {
-          throw new Error("Logout failed");
+        if (response.success) {
+          
+          dispatch(logout());
+          navigate("/"); 
         }
-        dispatch(logout());
-        navigate("/"); // Navigate to home or login page
       })
       .catch((error) => {
         console.error("Error during logout:", error);
