@@ -2,8 +2,13 @@ import { useForm } from "react-hook-form";
 import { useNavigate } from 'react-router-dom';
 import { setUser } from "../store/Slices/authSlice";
 import {api} from '../services/axiosInstance'; 
+import OtpVerification from "./OtpVerification";
+import { useState } from "react";
 
 function Signup() {
+
+  const [formData, setFormData] = useState({});
+
   const navigate = useNavigate();
   const {
     register,
@@ -12,7 +17,7 @@ function Signup() {
     formState: { errors, isSubmitting },
   } = useForm();
 
-  
+  const [step,setStep]=useState('register');
  const onSubmit = async (data) => {
  
   try {
@@ -20,9 +25,9 @@ function Signup() {
 
 
     if (response.data.success) {
-
-      alert("Signup Successful please login");
-      navigate('/');
+      setStep('verify');
+      setFormData(response.data);
+   
     } else {
       const errorMsg = response.data.errors?.map(err => err.msg).join('\n') || response.data.error;
       alert(errorMsg);
@@ -33,7 +38,14 @@ function Signup() {
   }
 };
 
+const handleVerificationSuccess = async (data) => {
+  setTimeout(() => {
+    navigate('/login');
+  }, 2000);
+}
 
+
+if (step === 'register') {
   return (
     <div className="min-h-screen bg-amber-50 py-16 px-4 flex items-center justify-center">
     <div className="max-w-md w-full bg-white shadow-lg rounded-lg overflow-hidden">
@@ -142,7 +154,16 @@ function Signup() {
     </div>
   </div>
 );
+}
 
+if (step === 'verify') {
+return(
+  <OtpVerification email={formData.email}
+  onVerificationSuccess={handleVerificationSuccess}
+   />
+
+)
+}
   
 }
 
