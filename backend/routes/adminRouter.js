@@ -4,6 +4,7 @@ const adminAuthController=require('../controllers/admin/adminAuthController');
 const protectAdmin=require('../Middlewares/protectAdmin').protectAdmin;
 const adminProductController=require('../controllers/admin/adminProductsController');
 const upload=require('../config/multer-CloudniaryConfig').upload;
+const { check } = require('express-validator');
 
 adminRouter.post('/api/admin/login',adminAuthController.adminLogin);
 
