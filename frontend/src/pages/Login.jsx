@@ -3,7 +3,10 @@ import { useForm } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router-dom';
 import { setUser } from '../store/Slices/authSlice'; 
 import { useDispatch } from 'react-redux';
-import { api } from '../services/axiosInstance'; // Adjust the import path as necessary
+import { api } from '../services/axiosInstance'; 
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 
 const Login = () => {
   const dispatch = useDispatch();
@@ -16,8 +19,14 @@ const Login = () => {
 
       if (response.data.success) {
         dispatch(setUser(response.data.userData));
-        alert(response.data.message || 'Login successful');
+        toast.success('Login successful! Redirecting to dashboard...',{
+          position: "top-right",
+          autoClose: 2000,
+        });
+
+        setTimeout(() => {
         navigate('/');
+        },1000);
       } else {
         alert(response.data.message || 'Login failed');
       }
@@ -28,6 +37,12 @@ const Login = () => {
   };
 
   return (
+
+    <>
+    
+    <ToastContainer />
+    
+    
     <div className="min-h-screen bg-amber-50 flex items-center justify-center px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8 bg-white p-8 rounded-xl shadow-lg">
         <div>
@@ -106,6 +121,7 @@ const Login = () => {
         </form>
       </div>
     </div>
+    </>
   );
 };
 

@@ -4,7 +4,11 @@ import { Lock, Mail, User } from 'lucide-react';
 import { api } from '../services/axiosInstance';
 import { useDispatch } from 'react-redux';
 import { setAdmin } from '../store/Slices/adminSlice';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import AdminOtpVerification from './AdminOtpVerification';
+
+
 const AdminLogin = () => {
 
 const dispatch = useDispatch();
@@ -65,6 +69,10 @@ const [step,setStep]=useState('register');
   };
   if(step === 'register') {
   return (
+    <>
+    <ToastContainer />
+    
+  
    
     <div className="min-h-screen bg-gradient-to-br from-amber-50 to-amber-100 flex items-center justify-center px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8 bg-white p-8 rounded-xl shadow-lg">
@@ -218,6 +226,7 @@ const [step,setStep]=useState('register');
         </div>
       </div>
     </div>
+    </>
   );
 }
 

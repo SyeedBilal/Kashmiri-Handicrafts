@@ -1,6 +1,7 @@
 const Admin = require("../../models/adminModel");
 const bcrypt = require("bcrypt");
-const {sendOtpEmail} = require("../../config/jwtUtlis");
+const {sendOtpEmail} = require("../../utils/nodemailer");
+const {generateToken} = require("../../config/jwtUtlis");
 
 
 exports.adminSignup = async (req, res) => {
@@ -11,14 +12,20 @@ exports.adminSignup = async (req, res) => {
   }
 
 const {name,email,password,confirmPassword}=req.body;
+
 console.log("Signup data",req.body);
 
-const isAlreadyExist=await Admin.findOne({email});
-if(isAlreadyExist){
-  return res.status(400).json({error:"Admin already exists",success:false});
 
-}
-const otp=generateOtp();
+
+try{
+  const isAlreadyExist=await Admin.findOne({email});
+  if(isAlreadyExist){
+    return res.status(400).json({error:"Admin already exists",success:false});
+    
+  }
+  
+  
+  const otp=generateOtp();
 
   const otpExpiry=new Date(Date.now() + 10*60*1000);
 
@@ -33,9 +40,9 @@ const admin=new Admin({
   isverified:false
 })
 
-try{
+
   await admin.save();
-  res.status(200).json({message:"Admin Registered Successfully",success:true});
+  
 
    const emailResult=await sendOtpEmail(email,otp);
 
@@ -62,6 +69,7 @@ catch(err){
 exports.verifyOtp=async(req,res)=>{
 
   console.log("Verify OTP",req.body);
+
   const {otp,email}=req.body;
 
   try{
@@ -106,6 +114,11 @@ res.status(200).json({
 
 
 exports.resendOtp = async (req, res) => {
+
+  const generateOtp=()=>{
+    return Math.floor(100000 + Math.random() * 900000).toString();
+  
+  }
   const { email } = req.body;
 
   try {
@@ -122,7 +135,7 @@ exports.resendOtp = async (req, res) => {
     }
 
     // Generate new OTP
-    const otp = generateOTP();
+    const otp = generateOtp();
     const otpExpiry = new Date();
     otpExpiry.setMinutes(otpExpiry.getMinutes() + 10);
 

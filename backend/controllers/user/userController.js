@@ -118,6 +118,10 @@ res.status(200).json({
 exports.resendOtp = async (req, res) => {
   const { email } = req.body;
 
+  const generateOtp=()=>{
+    return Math.floor(100000 + Math.random() * 900000).toString();
+  
+  }
   try {
     // Find the user with the given email
     const user = await User.findOne({ email });
@@ -132,7 +136,7 @@ exports.resendOtp = async (req, res) => {
     }
 
     // Generate new OTP
-    const otp = generateOTP();
+    const otp = generateOtp();
     const otpExpiry = new Date();
     otpExpiry.setMinutes(otpExpiry.getMinutes() + 10);
 
