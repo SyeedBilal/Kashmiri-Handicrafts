@@ -126,6 +126,7 @@ exports.resendOtp = async (req, res) => {
       return res.status(404).json({ error: "User not found", success: false });
     }
 
+
     if (user.isverified) {
       return res.status(400).json({ error: "User is already verified", success: false });
     }
@@ -175,6 +176,10 @@ exports.loginUser=async (req,res)=>{
     const user=await User.findOne({email});
     if(!user){
       return res.status(400).json({error:"Invalid Credentials",success:false});
+    }
+
+    if (!user.isverified) {
+      return res.status(400).json({ error: "User is not verified", success: false });
     }
 
     const isMatch=await bcrypt.compare(password,user.password);

@@ -4,7 +4,7 @@ import { api } from "../services/axiosInstance";
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-const OtpVerification = ({ email, onVerificationSuccess,onResend }) => {
+const AdminOtpVerification = ({ email, onVerificationSuccess,onResend }) => {
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
@@ -19,7 +19,7 @@ const OtpVerification = ({ email, onVerificationSuccess,onResend }) => {
 
     // Move focus to next input
     if (element.value && index < 5) {
-      const nextInput = document.getElementById(`otp-${index + 1}`);
+      const nextInput = document.getElementById(`admin-otp-${index + 1}`);
       if (nextInput) {
         nextInput.focus();
       }
@@ -29,7 +29,7 @@ const OtpVerification = ({ email, onVerificationSuccess,onResend }) => {
   // Handle keydown for backspace navigation
   const handleKeyDown = (e, index) => {
     if (e.key === 'Backspace' && !otp[index] && index > 0) {
-      const prevInput = document.getElementById(`otp-${index - 1}`);
+      const prevInput = document.getElementById(`admin-otp-${index - 1}`);
       if (prevInput) {
         prevInput.focus();
       }
@@ -39,7 +39,7 @@ const OtpVerification = ({ email, onVerificationSuccess,onResend }) => {
   // Handle resend OTP
   const handleResendOtp = async () => {
     try {
-      const response = await api.post('/resend-otp', { email });
+      const response = await api.post('/admin/resend-otp', { email });
       if (response.data.success) {
         toast.info('A new OTP has been sent to your email', {
           position: "top-right"
@@ -67,7 +67,7 @@ const OtpVerification = ({ email, onVerificationSuccess,onResend }) => {
     setError('');
     
     try {
-      const response = await api.post('/verify-otp', {
+      const response = await api.post('/admin/verify-otp', {
         otp: otpValue,
         email
       });
@@ -98,60 +98,60 @@ const OtpVerification = ({ email, onVerificationSuccess,onResend }) => {
 
   return (
     <>
-    <ToastContainer />
-    <div className="min-h-screen bg-amber-50 py-16 px-4 flex items-center justify-center">
-      <div className="max-w-md w-full bg-white shadow-lg rounded-lg overflow-hidden">
-        {/* Header - styled to match signup form */}
-        <div className="bg-amber-900 text-amber-100 p-6">
-          <h2 className="text-3xl font-bold text-center">Verify Your Email</h2>
-          <p className="text-center text-amber-200 mt-2">Enter the 6-digit code sent to {email}</p>
-        </div>
-        
-        <div className="p-8">
-          <div className="flex justify-center gap-2 mb-6">
-            {otp.map((digit, index) => (
-              <input
-                key={index}
-                id={`otp-${index}`}
-                type="text"
-                maxLength="1"
-                value={digit}
-                onChange={(e) => handleChange(e.target, index)}
-                onKeyDown={(e) => handleKeyDown(e, index)}
-                className="w-12 h-12 text-center text-xl border border-amber-300 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500 bg-white text-amber-900"
-              />
-            ))}
+      <ToastContainer />
+      <div className="min-h-screen bg-amber-50 py-16 px-4 flex items-center justify-center">
+        <div className="max-w-md w-full bg-white shadow-lg rounded-lg overflow-hidden">
+          {/* Header - styled to match signup form */}
+          <div className="bg-amber-900 text-amber-100 p-6">
+            <h2 className="text-3xl font-bold text-center">Verify Your Email</h2>
+            <p className="text-center text-amber-200 mt-2">Enter the 6-digit code sent to {email}</p>
           </div>
           
-          {error && <p className="text-red-600 text-center mb-4">{error}</p>}
-          {message && <p className="text-green-600 text-center mb-4">{message}</p>}
-          
-          <button
-            onClick={handleSubmit}
-            disabled={isSubmitting}
-            className={`bg-amber-700 text-white font-medium w-full p-3 rounded-md transition duration-300 hover:bg-amber-800 ${
-              isSubmitting ? "opacity-50 cursor-not-allowed" : ""
-            }`}
-          >
-            {isSubmitting ? "Verifying..." : "Verify Email"}
-          </button>
-          
-          <div className="mt-6 text-center">
-            <p className="text-amber-900">
-              Didn't receive the code?{" "}
-              <button
-                onClick={handleResendOtp}
-                className="text-amber-700 font-medium hover:underline"
-              >
-                Resend Code
-              </button>
-            </p>
+          <div className="p-8">
+            <div className="flex justify-center gap-2 mb-6">
+              {otp.map((digit, index) => (
+                <input
+                  key={index}
+                  id={`admin-otp-${index}`}
+                  type="text"
+                  maxLength="1"
+                  value={digit}
+                  onChange={(e) => handleChange(e.target, index)}
+                  onKeyDown={(e) => handleKeyDown(e, index)}
+                  className="w-12 h-12 text-center text-xl border border-amber-300 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500 bg-white text-amber-900"
+                />
+              ))}
+            </div>
+            
+            {error && <p className="text-red-600 text-center mb-4">{error}</p>}
+            {message && <p className="text-green-600 text-center mb-4">{message}</p>}
+            
+            <button
+              onClick={handleSubmit}
+              disabled={isSubmitting}
+              className={`bg-amber-700 text-white font-medium w-full p-3 rounded-md transition duration-300 hover:bg-amber-800 ${
+                isSubmitting ? "opacity-50 cursor-not-allowed" : ""
+              }`}
+            >
+              {isSubmitting ? "Verifying..." : "Verify Email"}
+            </button>
+            
+            <div className="mt-6 text-center">
+              <p className="text-amber-900">
+                Didn't receive the code?{" "}
+                <button
+                  onClick={handleResendOtp}
+                  className="text-amber-700 font-medium hover:underline"
+                >
+                  Resend Code
+                </button>
+              </p>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-  </>
+    </>
   );
 };
 
-export default OtpVerification;
+export default AdminOtpVerification;

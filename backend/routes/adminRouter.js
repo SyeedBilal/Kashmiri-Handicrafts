@@ -25,6 +25,16 @@ adminRouter.get('/api/admin/dashboard/:adminId',protectAdmin,adminProductControl
 adminRouter.put('/api/admin/orders/deliver/:orderId',protectAdmin,adminProductController.updateOrderStatus);
 
 
+adminRouter.post('/api/admin/verify-otp', adminAuthController.verifyOtp);
+
+
+adminRouter.post('/api/admin/resend-otp', 
+  [check('email', 'Please include a valid email').isEmail()], 
+  adminAuthController.resendOtp
+);
+
+
+
 
 
 module.exports=adminRouter;

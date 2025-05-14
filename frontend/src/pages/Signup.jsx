@@ -4,6 +4,8 @@ import { setUser } from "../store/Slices/authSlice";
 import {api} from '../services/axiosInstance'; 
 import OtpVerification from "./OtpVerification";
 import { useState } from "react";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function Signup() {
 
@@ -39,6 +41,7 @@ function Signup() {
 };
 
 const handleVerificationSuccess = async (data) => {
+  toast.success('Admin account verified successfully!');
   setTimeout(() => {
     navigate('/login');
   }, 2000);
@@ -47,6 +50,10 @@ const handleVerificationSuccess = async (data) => {
 
 if (step === 'register') {
   return (
+    <>
+
+<ToastContainer />
+
     <div className="min-h-screen bg-amber-50 py-16 px-4 flex items-center justify-center">
     <div className="max-w-md w-full bg-white shadow-lg rounded-lg overflow-hidden">
       {/* Header */}
@@ -153,15 +160,19 @@ if (step === 'register') {
       </div>
     </div>
   </div>
-);
+  </>
+  );
 }
 
 if (step === 'verify') {
 return(
+  <>
+  <ToastContainer />
   <OtpVerification email={formData.email}
   onVerificationSuccess={handleVerificationSuccess}
    />
 
+</>
 )
 }
   

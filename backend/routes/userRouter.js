@@ -11,7 +11,7 @@ UserRouter.post('/api/verify-otp', userController.verifyOtp);
 UserRouter.post('/api/login', loginValidator,userController.loginUser);
 UserRouter.post('/api/logout', userController.logoutUser);
 
-UserRouter.post('/resend-otp', 
+UserRouter.post('/api/resend-otp', 
   [check('email', 'Please include a valid email').isEmail()], 
   userController.resendOtp
 );

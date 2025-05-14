@@ -4,11 +4,14 @@ import { Lock, Mail, User } from 'lucide-react';
 import { api } from '../services/axiosInstance';
 import { useDispatch } from 'react-redux';
 import { setAdmin } from '../store/Slices/adminSlice';
+import AdminOtpVerification from './AdminOtpVerification';
 const AdminLogin = () => {
 
 const dispatch = useDispatch();
+const [step,setStep]=useState('register');
 
   const [isLogin, setIsLogin] = useState(true);
+
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -21,6 +24,12 @@ const dispatch = useDispatch();
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+
+    const handleVerificationSuccess = async (data) => {
+      setTimeout(() => {
+        navigate('/admin/login');
+      }, 2000);
+    }
     
     try {
       if (isLogin) {
@@ -28,9 +37,15 @@ const dispatch = useDispatch();
        
         if (response.data.success) {
           
-          alert(response.message || 'Login successful');
+          toast.success('Login successful! Redirecting to dashboard...', {
+            position: "top-right",
+            autoClose: 2000
+          });
          dispatch(setAdmin(response.data.admin));
-          navigate('/admin/dashboard');
+
+         setTimeout(() => {
+          navigate('/admin/login');
+        },2000);
         }
       } else {
         // Validate passwords match
@@ -40,8 +55,7 @@ const dispatch = useDispatch();
         }
         const response = await api.post('/admin/signup', formData);
         if (response.data) {
-          setIsLogin(true);
-          setError('Signup successful! Please login.');
+       setStep('verify');
           setFormData({ ...formData, password: '', confirmPassword: '' });
         }
       }
@@ -49,8 +63,9 @@ const dispatch = useDispatch();
       setError(err.response?.data?.message || 'Something went wrong. Please try again.');
     }
   };
-
+  if(step === 'register') {
   return (
+   
     <div className="min-h-screen bg-gradient-to-br from-amber-50 to-amber-100 flex items-center justify-center px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8 bg-white p-8 rounded-xl shadow-lg">
         {/* Header */}
@@ -204,6 +219,17 @@ const dispatch = useDispatch();
       </div>
     </div>
   );
+}
+
+
+if(step === 'verify') {
+
+  return(
+    <AdminOtpVerification email={formData.email} 
+    onVerificationSuccess={handleVerificationSuccess}/>
+
+  )
+}
 };
 
 export default AdminLogin;
