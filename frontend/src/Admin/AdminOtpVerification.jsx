@@ -80,8 +80,15 @@ const AdminOtpVerification = ({ email, onVerificationSuccess,onResend }) => {
           autoClose: 2000
         });
         
+      
         if (onVerificationSuccess) {
           onVerificationSuccess();
+        } else {
+          // Default behavior if callback not provided
+          setTimeout(() => {
+            
+            window.location.href = '/admin/login';
+          }, 2000);
         }
       } else {
         setError(response.data.error || 'Verification failed');
