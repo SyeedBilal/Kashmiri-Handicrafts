@@ -1,6 +1,6 @@
 const User=require('../../models/userModel');
 const { check, validationResult } = require("express-validator");
-const bcrypt=require('bcrypt');
+const bcrypt=require('bcryptjs');
 const {sendOtpEmail}=require('../../utils/nodemailer');
 const crypto=require('crypto');
 
