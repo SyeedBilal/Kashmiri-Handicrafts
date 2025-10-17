@@ -23,9 +23,18 @@ app.use(cookieParser());
 
 app.use(sessionConfig);
 
+app.get("/health", (req, res) => {
+  res.status(200).json({
+    status: "ok",
+    message: "Backend is healthy",
+    timestamp: new Date(),
+  });
+});
+
+
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL || "http://localhost:5173",
+    origin: "http://localhost:5173" || process.env.FRONTEND_URL,
     credentials: true, // must be true to allow cookies
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization'],
@@ -52,14 +61,14 @@ app.use((err, req, res, next) => {
 });
 
 
-// Serve static files from the React app
-app.use(express.static(path.join(__dirname, '../frontend/dist')));
+// // Serve static files from the React app
+// app.use(express.static(path.join(__dirname, '../frontend/dist')));
 
-// The "catch-all" handler: for any request that doesn't
-// match one of the routes above, send back React's index.html file
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '../frontend/dist', 'index.html'));
-});
+// // The "catch-all" handler: for any request that doesn't
+// // match one of the routes above, send back React's index.html file
+// app.get('*', (req, res) => {
+//   res.sendFile(path.join(__dirname, '../frontend/dist', 'index.html'));
+// });
 
 app.listen(port, () =>
   console.log(`Backend Server is running on port http://localhost:${port}`)
