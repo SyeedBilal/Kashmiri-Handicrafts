@@ -2,7 +2,7 @@ version: "3.9"
 
 services:
   backend:
-    build: ./backend
+    image: "syedbilal47/kashmiri-handicrafts-backend"
     container_name: backend
     ports:
       - "3000:3000"
@@ -26,7 +26,7 @@ services:
       - mern-network
 
   frontend:
-    build: ./frontend
+    image: "syedbilal47/kashmiri-handicrafts-frontend"
     container_name: frontend
     ports:
       - "5173:80"
