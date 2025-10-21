@@ -4,9 +4,10 @@ import { logoutAdmin } from "../store/Slices/adminSlice";
 import { logout } from '../store/Slices/authSlice'; 
 
 const api = axios.create({
-  baseURL: `${import.meta.env.VITE_BACKEND_URL}/api` || 'http://localhost:3000/api',
-  withCredentials: true, // Send cookies (session-based authentication)
+  baseURL: '/api',
+  withCredentials: true
 });
+
 
 // Interceptor
 api.interceptors.response.use(
