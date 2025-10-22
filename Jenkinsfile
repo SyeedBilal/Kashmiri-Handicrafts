@@ -1,6 +1,6 @@
 pipeline {
     agent {
-        label 'vinod'
+         label 'mern-agent' 
     }
 
     environment {
