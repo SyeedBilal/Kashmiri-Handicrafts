@@ -1,6 +1,6 @@
 pipeline {
     agent {
-         label 'mern-agent' 
+         label 'ec2-fleet' 
     }
 
     environment {
