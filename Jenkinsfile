@@ -1,6 +1,6 @@
 pipeline {
     agent {
-         label 'vinod' 
+         label 'ec2-fleet' 
     }
 
     environment {
