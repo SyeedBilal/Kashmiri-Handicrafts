@@ -16,8 +16,8 @@ async function initializeRazorpay() {
     }
 
     razorpayInstance = new Razorpay({
-      key_id: process.env.RAZORPAY_KEY_ID,
-      key_secret: process.env.RAZORPAY_KEY_SECRET,
+      key_id: process.env.RAZORPAY_KEY_ID || 'dummy_id',
+      key_secret: process.env.RAZORPAY_KEY_SECRET || 'dummy_secret',
     });
 
     console.log('✅ Razorpay initialized successfully');
