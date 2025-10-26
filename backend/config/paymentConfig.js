@@ -1,34 +1,28 @@
+// backend/config/paymentConfig.js
+const AWS = require('aws-sdk');
 const Razorpay = require('razorpay');
-const loadSecrets = require('./awsSecrets'); // or wherever your secret loader is
 
-let razorpayInstance;
+const secretsManager = new AWS.SecretsManager({ region: 'ap-south-1' });
 
-async function initializeRazorpay() {
-  try {
-    // Ensure secrets are loaded
-    if (!process.env.RAZORPAY_KEY_ID || !process.env.RAZORPAY_KEY_SECRET) {
-      await loadSecrets();
-    }
+const razorpayPromise = (async () => {
+  console.log("🔐 Fetching Razorpay keys from AWS Secrets Manager...");
 
-    // Verify environment variables are set
-    if (!process.env.RAZORPAY_KEY_ID || !process.env.RAZORPAY_KEY_SECRET) {
-      throw new Error('Razorpay credentials not found in environment variables');
-    }
+  const data = await secretsManager.getSecretValue({ SecretId: 'myApp/secrets' }).promise();
+  const secrets = JSON.parse(data.SecretString);
 
-    razorpayInstance = new Razorpay({
-      key_id: process.env.RAZORPAY_KEY_ID || 'dummy_id',
-      key_secret: process.env.RAZORPAY_KEY_SECRET || 'dummy_secret',
-    });
+  // Assign them to environment variables (for other files if needed)
+  process.env.RAZORPAY_KEY_ID = secrets.RAZORPAY_KEY_ID;
+  process.env.RAZORPAY_KEY_SECRET = secrets.RAZORPAY_KEY_SECRET;
 
-    console.log('✅ Razorpay initialized successfully');
-    return razorpayInstance;
-  } catch (error) {
-    console.error('❌ Failed to initialize Razorpay:', error.message);
-    throw error;
-  }
-}
+  console.log("✅ Razorpay keys loaded successfully");
 
-// Initialize immediately and export promise
-const razorpayPromise = initializeRazorpay();
+  // Now safely create Razorpay instance
+  const razorpay = new Razorpay({
+    key_id: process.env.RAZORPAY_KEY_ID,
+    key_secret: process.env.RAZORPAY_KEY_SECRET,
+  });
+
+  return razorpay;
+})();
 
 module.exports = razorpayPromise;
