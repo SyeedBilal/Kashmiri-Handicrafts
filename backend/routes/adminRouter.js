@@ -3,7 +3,7 @@ const adminRouter=express.Router();
 const adminAuthController=require('../controllers/admin/adminAuthController');
 const protectAdmin=require('../Middlewares/protectAdmin').protectAdmin;
 const adminProductController=require('../controllers/admin/adminProductsController');
-const upload=require('../config/multer-CloudniaryConfig').upload;
+const initCloudinary=require('../config/multer-CloudniaryConfig');
 const { check } = require('express-validator');
 
 adminRouter.post('/api/admin/login',adminAuthController.adminLogin);
@@ -13,13 +13,25 @@ adminRouter.post('/api/admin/signup',adminAuthController.adminSignup);
 adminRouter.post('/api/admin/logout',adminAuthController.adminLogout);
 
 
-adminRouter.post('/api/admin/addProduct/:adminId',protectAdmin,upload.single('image'),adminProductController.addProduct);
+(async () => {
+  const { upload } = await initCloudinary(); // initialize and wait for upload
+
+adminRouter.post('/upload', upload.single('image'), async (req, res) => {
+    res.json({ fileUrl: req.file.path });
+  });
+})();
 
 adminRouter.get('/api/admin/getProducts/:adminId',protectAdmin,adminProductController.getAdminProducts);
 
 adminRouter.delete('/api/admin/deleteProduct/:productId',protectAdmin,adminProductController.deleteProduct);
 
-adminRouter.put('/api/admin/updateProduct/:productId',protectAdmin,upload.single('image'),adminProductController.updateProduct);
+(async () => {
+  const { upload } = await initCloudinary(); // initialize and wait for upload
+
+  adminRouter.post('/upload', upload.single('image'), async (req, res) => {
+    res.json({ fileUrl: req.file.path });
+  });
+})();
 
 adminRouter.get('/api/admin/dashboard/:adminId',protectAdmin,adminProductController.getAdminProductsAnaytics);
 

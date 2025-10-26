@@ -1,35 +1,19 @@
 pipeline {
-    agent {
-        label 'vinod'
-    }
+    agent { label 'vinod' }
 
     environment {
-        NODEJS_HOME = '/usr/local/bin/node'
-        PATH = "${NODEJS_HOME}:${PATH}"
         FRONTEND_DIR = 'frontend'
         BACKEND_DIR = 'backend'
         NGINX_ROOT = '/var/www/html'
+        S3_BUCKET = 'kash-handicrafts-s3'
+        AWS_REGION = 'ap-south-1'  // change if needed
     }
 
     stages {
-        stage('CheckOut Code') {
+        stage('Checkout Code') {
             steps {
-                echo "🔄 Cloning the Repository...."
-                git branch: 'non-docker', 
-                    url: 'https://github.com/SyeedBilal/Kashmiri-Handicrafts.git'
-            }
-        }
-
-        stage('Backup Current Deployment') {
-            steps {
-                script {
-                    echo "💾 Creating backup..."
-                    sh '''
-                        TIMESTAMP=$(date +%Y%m%d-%H%M%S)
-                        [ -d "${NGINX_ROOT}" ] && sudo tar -czf /tmp/frontend-backup-${TIMESTAMP}.tar.gz -C ${NGINX_ROOT} . || true
-                        echo "✅ Backup completed"
-                    '''
-                }
+                echo "🔄 Cloning the Repository..."
+                git branch: 'non-docker', url: 'https://github.com/SyeedBilal/Kashmiri-Handicrafts.git'
             }
         }
 
@@ -43,6 +27,7 @@ pipeline {
                         }
                     }
                 }
+
                 stage('Frontend Setup') {
                     steps {
                         dir("${FRONTEND_DIR}") {
@@ -68,25 +53,23 @@ pipeline {
             }
         }
 
-        stage('Deploy Frontend to Nginx') {
+        stage('Deploy Frontend to S3') {
             steps {
-                echo "🚀 Deploying frontend build to Nginx....."
-                sh """
-                    sudo rm -rf ${NGINX_ROOT}/*
-                    sudo cp -r ${FRONTEND_DIR}/dist/* ${NGINX_ROOT}/
-                    sudo systemctl restart nginx
-                """
+                echo "🚀 Deploying frontend build to AWS S3..."
+                dir("${FRONTEND_DIR}") {
+                    sh "aws s3 sync dist/ s3://${S3_BUCKET} --delete --region ${AWS_REGION}"
+                }
             }
         }
 
-        stage('Deploy Backend with pm2') {
+        stage('Deploy Backend with PM2') {
             steps {
                 dir("${BACKEND_DIR}") {
-                    echo "🚀 Starting Backend Application with pm2...."
+                    echo "🚀 Starting Backend Application with PM2..."
                     sh '''
                         pm2 stop backend || true
                         pm2 delete backend || true
-                        pm2 start app.js --name "backend" --env production
+                        pm2 start app.js --name "backend"
                         pm2 save
                     '''
                 }
@@ -98,13 +81,13 @@ pipeline {
                 script {
                     echo "🏥 Performing health checks..."
                     sleep(time: 5, unit: 'SECONDS')
-                    
+
                     sh '''
                         # Check Frontend
-                        curl -f http://localhost:80 || (echo "❌ Frontend check failed" && exit 1)
+                       curl -f http://kash-handicrafts-s3.s3-website.ap-south-1.amazonaws.com || (echo "❌ Frontend check failed" && exit 1)
                         echo "✅ Frontend is healthy"
-                        
-                        # Check Backend (adjust port if needed)
+
+                        # Check Backend
                         pm2 status backend | grep online || (echo "❌ Backend not running" && exit 1)
                         echo "✅ Backend is healthy"
                     '''

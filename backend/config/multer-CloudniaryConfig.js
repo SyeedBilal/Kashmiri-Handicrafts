@@ -1,25 +1,33 @@
-
 const cloudinary = require('cloudinary').v2;
 const { CloudinaryStorage } = require('multer-storage-cloudinary');
 const multer = require('multer');
-require('dotenv').config();
+const loadSecrets = require('./awsSecrets');
 
-cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
-});
+let upload; // will be initialized later
+let configuredCloudinary; // to export a configured instance
 
-const storage = new CloudinaryStorage({
-  cloudinary,
-  params: {
-    folder: 'kashmiri-handicrafts',
-    allowed_formats: ['jpg', 'jpeg', 'png', 'webp'],
-    transformation: [{ width: 800, height: 800, crop: 'limit' }],
-  },
-});
+async function initCloudinary() {
+  await loadSecrets(); // load secrets before configuring
 
-const upload = multer({ storage });
+  cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET,
+  });
 
-module.exports = { cloudinary, upload };
+  const storage = new CloudinaryStorage({
+    cloudinary,
+    params: {
+      folder: 'kashmiri-handicrafts',
+      allowed_formats: ['jpg', 'jpeg', 'png', 'webp'],
+      transformation: [{ width: 800, height: 800, crop: 'limit' }],
+    },
+  });
 
+  upload = multer({ storage });
+  configuredCloudinary = cloudinary;
+
+  return { cloudinary, upload };
+}
+
+module.exports = initCloudinary;

@@ -1,8 +1,13 @@
 const mongoose = require('mongoose');
-require('dotenv').config(); // Load environment variables
+
+
+const loadSecrets=require('./awsSecrets');
+
+
 
 const connectDB = async () => {
   try {
+    await loadSecrets(); // Load AWS secrets before connecting to DB
     const conn = await mongoose.connect(process.env.MONGO_URI);
 
     console.log(`MongoDB Connected: ${conn.connection.host}`);

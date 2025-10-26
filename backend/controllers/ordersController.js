@@ -4,7 +4,7 @@ const CartItems = require('../models/cartModel');
 const User = require('../models/userModel');
 const crypto = require('crypto');
 const razorpay = require('../config/paymentConfig');
-require('dotenv').config();
+
 
 exports.createOrder=async(req,res)=>{
 
