@@ -1,5 +1,5 @@
 pipeline {
-    agent { label 'vinod' }
+    agent { label 'ec2-agent' }
 
     environment {
         FRONTEND_DIR = 'frontend'
