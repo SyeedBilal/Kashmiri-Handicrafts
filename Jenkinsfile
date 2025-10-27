@@ -12,9 +12,7 @@ pipeline {
     }
 
     stages {
-       
-        }
-
+    
         stage('Checkout Code') {
             steps {
                 echo "🔄 Cloning the Repository..."
