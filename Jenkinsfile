@@ -2,16 +2,25 @@ pipeline {
     agent { label 'ec2-agent' }
 
     environment {
-    FRONTEND_DIR = 'frontend'
-    BACKEND_DIR = 'backend'
-    NGINX_ROOT = '/var/www/html'
-    S3_BUCKET = 'kash-handicrafts-s3'
-    AWS_REGION = 'ap-south-1'
- // These are the standard system paths for Node.js
-    PATH = "/usr/bin:${env.PATH}"
-}
+        FRONTEND_DIR = 'frontend'
+        BACKEND_DIR = 'backend'
+        NGINX_ROOT = '/var/www/html'
+        S3_BUCKET = 'kash-handicrafts-s3'
+        AWS_REGION = 'ap-south-1'
+        // Node.js will be available in standard PATH
+        PATH = "/usr/bin:${env.PATH}"
+    }
 
     stages {
+        stage('Check Node.js Setup') {
+            steps {
+                sh '''
+                    node --version
+                    npm --version
+                '''
+            }
+        }
+
         stage('Checkout Code') {
             steps {
                 echo "🔄 Cloning the Repository..."
@@ -34,7 +43,7 @@ pipeline {
                     steps {
                         dir("${FRONTEND_DIR}") {
                             echo "📦 Installing Frontend Dependencies..."
-                              sh 'npm install'
+                            sh 'npm install'
                             echo "🔨 Building Frontend Application..."
                             sh 'npm run build'
                         }
@@ -86,7 +95,7 @@ pipeline {
 
                     sh '''
                         # Check Frontend
-                       curl -f http://kash-handicrafts-s3.s3-website.ap-south-1.amazonaws.com || (echo "❌ Frontend check failed" && exit 1)
+                        curl -f http://kash-handicrafts-s3.s3-website.ap-south-1.amazonaws.com || (echo "❌ Frontend check failed" && exit 1)
                         echo "✅ Frontend is healthy"
 
                         # Check Backend
