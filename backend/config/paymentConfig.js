@@ -7,12 +7,13 @@ const secretsManager = new AWS.SecretsManager({ region: 'ap-south-1' });
 const razorpayPromise = (async () => {
   console.log("🔐 Fetching Razorpay keys from AWS Secrets Manager...");
 
-  const data = await secretsManager.getSecretValue({ SecretId: 'myApp/secrets' }).promise();
+  const data = await secretsManager.getSecretValue({ SecretId: 'Kash-Handi-Secrets' }).promise();
   const secrets = JSON.parse(data.SecretString);
 
-  // Assign them to environment variables (for other files if needed)
+ 
   process.env.RAZORPAY_KEY_ID = secrets.RAZORPAY_KEY_ID;
   process.env.RAZORPAY_KEY_SECRET = secrets.RAZORPAY_KEY_SECRET;
+
 
   console.log("✅ Razorpay keys loaded successfully");
 
@@ -26,3 +27,5 @@ const razorpayPromise = (async () => {
 })();
 
 module.exports = razorpayPromise;
+
+
