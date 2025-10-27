@@ -24,6 +24,8 @@ pipeline {
                 stage('Backend Setup') {
                     steps {
                         dir("${BACKEND_DIR}") {
+                            sh 'which node && which npm && node -v && npm -v'
+
                             echo "📦 Installing Backend Dependencies..."
                             sh 'npm install --production'
                         }
