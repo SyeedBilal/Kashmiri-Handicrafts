@@ -7,7 +7,7 @@ pipeline {
     NGINX_ROOT = '/var/www/html'
     S3_BUCKET = 'kash-handicrafts-s3'
     AWS_REGION = 'ap-south-1'
-PATH = "/home/ubuntu/.nvm/versions/node/v22.21.0/bin:${env.PATH}'
+PATH = "/home/ubuntu/.nvm/versions/node/v22.21.0/bin:${env.PATH}"
 }
 
     stages {
