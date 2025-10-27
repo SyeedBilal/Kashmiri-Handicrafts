@@ -12,19 +12,13 @@ pipeline {
     }
 
     stages {
-        stage('Check Node.js Setup') {
-            steps {
-                sh '''
-                    node --version
-                    npm --version
-                '''
-            }
+       
         }
 
         stage('Checkout Code') {
             steps {
                 echo "🔄 Cloning the Repository..."
-                git branch: 'non-docker', url: 'https://github.com/SyeedBilal/Kashmiri-Handicrafts.git'
+                git branch: 'S3EC2', url: 'https://github.com/SyeedBilal/Kashmiri-Handicrafts.git'
             }
         }
 
