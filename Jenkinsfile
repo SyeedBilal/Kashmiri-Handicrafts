@@ -7,8 +7,7 @@ pipeline {
     NGINX_ROOT = '/var/www/html'
     S3_BUCKET = 'kash-handicrafts-s3'
     AWS_REGION = 'ap-south-1'
- NODE_PATH = '/usr/bin/node'
-        NPM_PATH = '/usr/bin/npm'
+PATH = "/home/ubuntu/.nvm/versions/node/v22.21.0/bin:${env.PATH}'
 }
 
     stages {
@@ -25,7 +24,7 @@ pipeline {
                     steps {
                         dir("${BACKEND_DIR}") {
                             echo "📦 Installing Backend Dependencies..."
-                            sh '/usr/bin/npm install --production'
+                            sh 'npm install --production'
                         }
                     }
                 }
@@ -34,9 +33,9 @@ pipeline {
                     steps {
                         dir("${FRONTEND_DIR}") {
                             echo "📦 Installing Frontend Dependencies..."
-                              sh '/usr/bin/npm install'
+                              sh 'npm install'
                             echo "🔨 Building Frontend Application..."
-                            sh '/usr/bin/npm run build'
+                            sh 'npm run build'
                         }
                     }
                 }
