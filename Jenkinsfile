@@ -7,7 +7,7 @@ pipeline {
         NGINX_ROOT = '/var/www/html'
         S3_BUCKET = 'kash-handicrafts-s3'
         AWS_REGION = 'ap-south-1'  // change if needed
-          NODEJS_HOME = '/usr/local/bin/node'
+          NODEJS_HOME = '/usr/local/bin'
         PATH = "${NODEJS_HOME}:${PATH}"
     }
 
