@@ -2,14 +2,13 @@ pipeline {
     agent { label 'ec2-agent' }
 
     environment {
-        FRONTEND_DIR = 'frontend'
-        BACKEND_DIR = 'backend'
-        NGINX_ROOT = '/var/www/html'
-        S3_BUCKET = 'kash-handicrafts-s3'
-        AWS_REGION = 'ap-south-1'  // change if needed
-          NODEJS_HOME = '/usr/local/bin'
-        PATH = "${NODEJS_HOME}:${PATH}"
-    }
+    FRONTEND_DIR = 'frontend'
+    BACKEND_DIR = 'backend'
+    NGINX_ROOT = '/var/www/html'
+    S3_BUCKET = 'kash-handicrafts-s3'
+    AWS_REGION = 'ap-south-1'
+    PATH = "/usr/local/bin:/usr/bin:/bin:/var/lib/jenkins/tools/jenkins.plugins.nodejs.tools.NodeJSInstallation/nodejs/bin"  // Add this
+}
 
     stages {
         stage('Checkout Code') {
