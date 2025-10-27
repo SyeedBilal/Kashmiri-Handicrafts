@@ -25,7 +25,7 @@ pipeline {
                     steps {
                         dir("${BACKEND_DIR}") {
                             echo "📦 Installing Backend Dependencies..."
-                            sh 'npm install --production'
+                            sh '/usr/bin/npm install --production'
                         }
                     }
                 }
@@ -34,9 +34,9 @@ pipeline {
                     steps {
                         dir("${FRONTEND_DIR}") {
                             echo "📦 Installing Frontend Dependencies..."
-                            sh 'npm install'
+                              sh '/usr/bin/npm install'
                             echo "🔨 Building Frontend Application..."
-                            sh 'npm run build'
+                            sh '/usr/bin/npm run build'
                         }
                     }
                 }
