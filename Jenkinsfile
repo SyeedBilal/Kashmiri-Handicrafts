@@ -7,7 +7,8 @@ pipeline {
     NGINX_ROOT = '/var/www/html'
     S3_BUCKET = 'kash-handicrafts-s3'
     AWS_REGION = 'ap-south-1'
-    PATH = "/usr/local/bin:/usr/bin:/bin:/var/lib/jenkins/tools/jenkins.plugins.nodejs.tools.NodeJSInstallation/nodejs/bin"  // Add this
+ NODE_PATH = '/usr/bin/node'
+        NPM_PATH = '/usr/bin/npm'
 }
 
     stages {
