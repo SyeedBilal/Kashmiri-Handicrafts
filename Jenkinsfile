@@ -1,5 +1,5 @@
 pipeline {
-    agent { label 'ec2-agent' }
+    agent { label 'jenkins-agent' }
 
     environment {
         FRONTEND_DIR = 'frontend'
