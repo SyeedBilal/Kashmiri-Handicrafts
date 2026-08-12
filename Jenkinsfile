@@ -1,11 +1,11 @@
 pipeline {
-    agent { label 'jenkins-agent' }
-
+    agent  any
     environment {
+        SONAR_HOME= tool "SonarScanner"
+        SONARQUBE_ENV = "SonarQube"
         FRONTEND_DIR = 'frontend'
         BACKEND_DIR = 'backend'
         NGINX_ROOT = '/var/www/html'
-        S3_BUCKET = 'kash-handicrafts-s3'
         AWS_REGION = 'ap-south-1'
         // Node.js will be available in standard PATH
         PATH = "/usr/bin:${env.PATH}"
@@ -26,7 +26,7 @@ pipeline {
                     steps {
                         dir("${BACKEND_DIR}") {
                             echo "📦 Installing Backend Dependencies..."
-                            sh 'npm install --production'
+                            sh 'npm ci'
                         }
                     }
                 }
@@ -35,9 +35,10 @@ pipeline {
                     steps {
                         dir("${FRONTEND_DIR}") {
                             echo "📦 Installing Frontend Dependencies..."
-                            sh 'npm install'
+                            sh 'npm ci'
                             echo "🔨 Building Frontend Application..."
-                            sh 'npm run build'
+                            // Ensure frontend is built with backend URL pointing to nginx on localhost
+                            sh 'VITE_BACKEND_URL=http://localhost npm run build'
                         }
                     }
                 }
@@ -56,12 +57,75 @@ pipeline {
             }
         }
 
-        stage('Deploy Frontend to S3') {
+        stage('SonarQube Scan') {
+      steps {
+        dir("${BACKEND_DIR}") {
+          withSonarQubeEnv('SonarQube') { // Use the name of your SonarQube server configured in Jenkins
+            echo "🔍 Running SonarQube Scan..."
+            
+            sh """
+              $SONAR_HOME/bin/sonar-scanner \
+                -Dsonar.projectKey=mern-backend \
+                -Dsonar.sources=. \
+                -Dsonar.exclusions=node_modules/** \
+                -Dsonar.host.url=\${SONAR_HOST_URL} \
+                -Dsonar.login=\${SONAR_AUTH_TOKEN}
+            """
+           
+          }
+        }
+      }
+    }
+
+    stage('Wait for Quality Gate') {
+      steps {
+        timeout(time: 8, unit: 'MINUTES') {
+          waitForQualityGate abortPipeline: true
+        }
+      }
+    }
+
+
+
+    stage('OWASP Dependency Check') {
+      steps {
+        echo "Running OWASP Dependency Check..."
+        dir("${BACKEND_DIR}") {
+          dependencyCheck additionalArguments: '''
+            --scan .
+            --exclude node_modules
+            --format JSON
+            --out dependency-check-report
+            --failOnCVSS 8
+          ''', odcInstallation: 'OWASP-DC'
+        }
+        dependencyCheckPublisher pattern: '**/dependency-check-report.json'
+      }
+    }
+
+        stage('Deploy Frontend with Nginx') {
             steps {
-                echo "🚀 Deploying frontend build to AWS S3..."
-                dir("${FRONTEND_DIR}") {
-                    sh "aws s3 sync dist/ s3://${S3_BUCKET} --delete --region ${AWS_REGION}"
-                }
+                echo "📡 Deploying frontend to NGINX root and configuring nginx..."
+                // Copy build artifacts and configure nginx to serve SPA and reverse-proxy /api
+                sh '''
+                    set -e
+                 
+                    # Create nginx root and copy built files
+                    sudo mkdir -p ${NGINX_ROOT}
+                    sudo rm -rf ${NGINX_ROOT}/* || true
+                    cp -r ${FRONTEND_DIR}/dist/* ${NGINX_ROOT}/
+                    sudo chown -R www-data:www-data ${NGINX_ROOT} || true
+
+                    # Install nginx config from repo
+                    sudo mkdir -p /etc/nginx/sites-available /etc/nginx/sites-enabled
+                    sudo cp infra/nginx/frontend.conf /etc/nginx/sites-available/frontend.conf
+                    sudo ln -sf /etc/nginx/sites-available/frontend.conf /etc/nginx/sites-enabled/frontend.conf
+                    sudo rm -f /etc/nginx/sites-enabled/default || true
+
+                    # Test and reload nginx
+                    sudo nginx -t
+                    sudo systemctl restart nginx || sudo service nginx restart || true
+                '''
             }
         }
 
@@ -85,15 +149,23 @@ pipeline {
                     echo "🏥 Performing health checks..."
                     sleep(time: 5, unit: 'SECONDS')
 
-                    sh '''
-                        # Check Frontend
-                        curl -f http://kash-handicrafts-s3.s3-website.ap-south-1.amazonaws.com || (echo "❌ Frontend check failed" && exit 1)
-                        echo "✅ Frontend is healthy"
+                                        sh '''
+                                                set -e
+                                                # Check Frontend (served by nginx)
+                                                if ! curl -fsS http://localhost/ >/dev/null; then
+                                                    echo "❌ Frontend not reachable at http://localhost/" && exit 1
+                                                fi
 
-                        # Check Backend
-                        pm2 status backend | grep online || (echo "❌ Backend not running" && exit 1)
-                        echo "✅ Backend is healthy"
-                    '''
+                                                # Check Backend via nginx health proxy
+                                                if ! curl -fsS http://localhost/health >/dev/null; then
+                                                    echo "❌ Backend health endpoint not reachable through nginx" && exit 1
+                                                fi
+
+                                                # PM2 process check
+                                                pm2 status backend | grep online || (echo "❌ Backend not running (pm2)" && exit 1)
+
+                                                echo "✅ Frontend and Backend are healthy"
+                                        '''
                 }
             }
         }
