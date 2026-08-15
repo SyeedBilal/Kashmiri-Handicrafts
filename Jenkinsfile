@@ -88,20 +88,24 @@ pipeline {
 
 
     stage('OWASP Dependency Check') {
-      steps {
-        echo "Running OWASP Dependency Check..."
-        dir("${BACKEND_DIR}") {
-          dependencyCheck additionalArguments: '''
-            --scan .
-            --exclude node_modules
-            --format JSON
-            --out dependency-check-report
-            --failOnCVSS 8
-          ''', odcInstallation: 'OWASP-DC'
+          when {
+            expression { env.NVD_API_KEY?.trim() }
+          }
+          steps {
+            echo "Running OWASP Dependency Check..."
+            dir("${BACKEND_DIR}") {
+              dependencyCheck additionalArguments: '''
+                --scan .
+                --exclude node_modules
+                --format JSON
+                --out dependency-check-report
+                --failOnCVSS 8
+                --nvd-api-key ${NVD_API_KEY}
+              ''', odcInstallation: 'OWASP-DC'
+            }
+            dependencyCheckPublisher pattern: '**/dependency-check-report.json'
+          }
         }
-        dependencyCheckPublisher pattern: '**/dependency-check-report.json'
-      }
-    }
 
         stage('Deploy Frontend with Nginx') {
             steps {
@@ -109,22 +113,31 @@ pipeline {
                 // Copy build artifacts and configure nginx to serve SPA and reverse-proxy /api
                 sh '''
                     set -e
-                 
+
+                    if sudo -n true >/dev/null 2>&1; then
+                      SUDO="sudo"
+                    elif [ "$(id -u)" -eq 0 ]; then
+                      SUDO=""
+                    else
+                      echo "ERROR: Jenkins user does not have passwordless sudo and is not root. Grant sudo or run this pipeline with sufficient privileges."
+                      exit 1
+                    fi
+
                     # Create nginx root and copy built files
-                    sudo mkdir -p ${NGINX_ROOT}
-                    sudo rm -rf ${NGINX_ROOT}/* || true
-                    cp -r ${FRONTEND_DIR}/dist/* ${NGINX_ROOT}/
-                    sudo chown -R www-data:www-data ${NGINX_ROOT} || true
+                    ${SUDO} mkdir -p ${NGINX_ROOT}
+                    ${SUDO} rm -rf ${NGINX_ROOT}/* || true
+                    ${SUDO} cp -r ${FRONTEND_DIR}/dist/. ${NGINX_ROOT}/
+                    ${SUDO} chown -R www-data:www-data ${NGINX_ROOT} || true
 
                     # Install nginx config from repo
-                    sudo mkdir -p /etc/nginx/sites-available /etc/nginx/sites-enabled
-                    sudo cp infra/nginx/frontend.conf /etc/nginx/sites-available/frontend.conf
-                    sudo ln -sf /etc/nginx/sites-available/frontend.conf /etc/nginx/sites-enabled/frontend.conf
-                    sudo rm -f /etc/nginx/sites-enabled/default || true
+                    ${SUDO} mkdir -p /etc/nginx/sites-available /etc/nginx/sites-enabled
+                    ${SUDO} cp infra/nginx/frontend.conf /etc/nginx/sites-available/frontend.conf
+                    ${SUDO} ln -sf /etc/nginx/sites-available/frontend.conf /etc/nginx/sites-enabled/frontend.conf
+                    ${SUDO} rm -f /etc/nginx/sites-enabled/default || true
 
                     # Test and reload nginx
-                    sudo nginx -t
-                    sudo systemctl restart nginx || sudo service nginx restart || true
+                    ${SUDO} nginx -t
+                    ${SUDO} systemctl restart nginx || ${SUDO} service nginx restart || true
                 '''
             }
         }
